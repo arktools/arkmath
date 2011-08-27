@@ -13,7 +13,7 @@ add_library(${PROJECT_NAME}
 	GpsIns.cpp
 	)
 
-add_dependencies(${PROJECT_NAME} BOOSTNUMERICBINDINGS)
+add_dependencies(${PROJECT_NAME} boost-numeric-bindings)
 target_link_libraries(${PROJECT_NAME} ${Boost_LIBRARIES} ${LAPACK_LIBRARIES})
 set_target_properties(${PROJECT_NAME} PROPERTIES VERSION ${LIBRARY_VERSION}
 	SOVERSION ${LIBRARY_SOVERSION})

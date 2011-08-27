@@ -28,8 +28,11 @@ set(CMAKE_MODULE_PATH
 	${CMAKE_SOURCE_DIR}/cmake/arkcmake
 )
 
-# for testing
 include (CTest)
+
+# settings
+option(DEV_MODE "Setup paths for developer testing." OFF)
+option(BUILD_SHARED_LIBS "Build shared libraries instead of static." OFF)
 
 # add definitions
 include(DefineCMakeDefaults)

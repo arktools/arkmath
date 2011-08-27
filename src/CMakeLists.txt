@@ -6,7 +6,7 @@ file(GLOB  navigationHeaders "gen/navigation/*.h*")
 file(GLOB  dynamicsSources "gen/dynamics/*.c*")
 file(GLOB  dynamicsHeaders "gen/dynamics/*.h*")
 
-add_library(${PROJECT_NAME} SHARED
+add_library(${PROJECT_NAME}
 	${navigationSources}
 	${dynamicsSources}
 	utilities.cpp

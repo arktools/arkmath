@@ -6,9 +6,11 @@ cmake_minimum_required (VERSION 2.6)
 # global needed variables
 set(APPLICATION_NAME ${PROJECT_NAME})
 
+# set for release
 set(APPLICATION_VERSION_MAJOR "0")
 set(APPLICATION_VERSION_MINOR "0")
 set(APPLICATION_VERSION_PATCH "0")
+set(BOOSTNUMERICBINDINGS_TAG "master")
 
 set(APPLICATION_VERSION "${APPLICATION_VERSION_MAJOR}.${APPLICATION_VERSION_MINOR}.${APPLICATION_VERSION_PATCH}")
 set(LIBRARY_VERSION ${APPLICATION_VERSION})
@@ -29,6 +31,7 @@ set(CMAKE_MODULE_PATH
 )
 
 include (CTest)
+include(ExternalProject)
 
 # settings
 option(DEV_MODE "Setup paths for developer testing." OFF)
@@ -75,7 +78,6 @@ Please create a separate build directory and run 'cmake /path/to/${PROJECT_NAME}
 # add macros
 include(MacroAddPlugin)
 include(MacroCopyFile)
-include(MacroFindOrBuild)
 include(MacroSetDefault)
 include(language_support_v2)
 include(MacroAddLinkFlags)
@@ -114,16 +116,25 @@ else()
 endif()
 
 # find libraries with cmake modules
-MacroFindOrBuild(BOOSTNUMERICBINDINGS thirdParty/boost-numeric-bindings
-	FOUND_GIT_REPO)
 find_package(LAPACK)
 find_package(Boost 1.40.0 REQUIRED COMPONENTS thread-mt system-mt)
+find_package(BOOSTNUMERICBINDINGS)
 
-# boost numeric bindings build
-if(BOOSTNUMERICBINDINGS_BUILD_FROM_SOURCE)
-	set(BOOSTNUMERICBINDINGS_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/thirdParty/boost-numeric-bindings")
-	add_custom_command(OUTPUT BOOSTNUMERICBINDINGS_BUILD.stamp 
-		COMMAND touch BOOSTNUMERICBINDINGS_BUILD.stamp)
+# external projects
+set(EP_BASE_DIR "${CMAKE_BINARY_DIR}/CMakeExternals")
+set_property(DIRECTORY PROPERTY EP_BASE ${EP_BASE_DIR})
+
+if( NOT BOOSTNUMERICBINDINGS)
+    ExternalProject_Add(boost-numeric-bindings
+        GIT_REPOSITORY "http://git.tiker.net/trees/boost-numeric-bindings.git"
+		GIT_TAG ${BOOSTNUMERICBINDINGS_TAG}
+		CONFIGURE_COMMAND ""
+		BUILD_COMMAND ""
+		INSTALL_COMMAND ""
+		BUILD_IN_SOURCE 1
+	)
+	set(BOOSTNUMERICBINDINGS_FOUND TRUE)
+	set(BOOSTNUMERICBINDINGS_INCLUDE_DIRS ${EP_BASE_DIR}/Source/boost-numeric-bindings)
 endif()
 
 # data directory

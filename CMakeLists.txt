@@ -164,23 +164,23 @@ install(FILES
 
 #
 # internal library list definition / dep summary
-message(STATUS "=================================")
-message(STATUS "\tLIBRARY\t\tBUILDING")
-message(STATUS "=================================")
+message(STATUS "================================================")
+message(STATUS "\tLIBRARY\t\t\tBUILDING")
+message(STATUS "================================================")
 
-message(STATUS "\tBoost Numeric Bindings\t\t${BOOSTNUMERICBINDINGS_FOUND}")
-if (BOOSTNUMERIC_BINDINGS_FOUND)
-endif ()
-
-message(STATUS "\tBoost\t\t${Boost_FOUND}")
+message(STATUS "\tBoost\t\t\t${Boost_FOUND}")
 if (Boost_FOUND)
 endif ()
 
-message(STATUS "\tLapack\t\t${LAPACK_FOUND}")
+message(STATUS "\tBoost Numeric Bindings\t${BOOSTNUMERICBINDINGS_FOUND}")
+if (BOOSTNUMERIC_BINDINGS_FOUND)
+endif ()
+
+message(STATUS "\tLapack\t\t\t${LAPACK_FOUND}")
 if (LAPACK_FOUND)
 endif ()
 
-message(STATUS "=================================")
+message(STATUS "================================================")
 
 # project wide flags
 include_directories( ${PROJECT_SOURCE_DIR}/src ${PROJECT_BINARY_DIR}/src)

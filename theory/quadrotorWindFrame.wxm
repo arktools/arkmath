@@ -1,0 +1,158 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created with wxMaxima version 0.8.7 ] */
+
+/* [wxMaxima: title   start ]
+Quadrotor Force and Moment Models
+   [wxMaxima: title   end   ] */
+
+/* [wxMaxima: input   start ] */
+if is(dynamicsWindFrameLoaded#true) then batchload("dynamicsWindFrame.wxm")$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+if is(quadrotorForceMoment#true) then batchload("quadrotorForceMoment.wxm")$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: section start ]
+Quadrotor Wind Frame Equations of Motion
+   [wxMaxima: section end   ] */
+
+/* [wxMaxima: subsect start ]
+Airframe Dynamics
+   [wxMaxima: subsect end   ] */
+
+/* [wxMaxima: input   start ] */
+quadAssumptions : [
+F_b[1,1]=F_b_quad[1,1], F_b[2,1]=F_b_quad[2,1], F_b[3,1]=F_b_quad[3,1],
+M_b[1,1]=M_b_quad[1,1], M_b[2,1]=M_b_quad[2,1], M_b[3,1]=M_b_quad[3,1],
+Jxy=0,Jyz=0,Jxz=0];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+d_x_wind_quad : factor(fullratsubst(quadAssumptions,d_x_wind));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: subsect start ]
+Trim Analaysis
+   [wxMaxima: subsect end   ] */
+
+/* [wxMaxima: input   start ] */
+d_x_wind_quad_trim_eq : factor(fullratsubst([%phi=0,%beta=0,wx=0,wy=0,wz=0,%alpha=%theta],d_x_wind_quad));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+mix_eq : [T_sum_eq=T_sum,delta_F_B_eq=delta_F_B,delta_L_R_eq=delta_L_R,delta_LR_FB_eq=delta_LR_FB];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+d_x_wind_quad_trim_eq[1,1] : fullratsubst([mix_eq[1]],d_x_wind_quad_trim_eq[1,1]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+d_x_wind_quad_trim_eq[2,1] : fullratsubst([mix_eq[1]],d_x_wind_quad_trim_eq[2,1]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+T_sum_trim : rhs(solve(d_x_wind_quad_trim_eq[1,1],T_sum)[1]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+theta_eq : ratnumer(fullratsimp(subst([T_sum=T_sum_trim],d_x_wind_quad_trim_eq[2,1])));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+theta_eq2: subst([K_cd_cl=0.02,Cd0=0.42,s_frame=0.1,Vt=3,g=9.81,m=1,%rho=1.225,%pi=3.14],theta_eq);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+plot2d([theta_eq2],[%theta,-%pi/3,0]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: subsect start ]
+Add Motor Dynamcis
+   [wxMaxima: subsect end   ] */
+
+/* [wxMaxima: input   start ] */
+x_motors : transpose([dutycycle_L,dutycycle_R,dutycycle_F,dutycycle_B]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+d_x_motors : transpose([
+%tau[motor]*(dutycycle_Lc-dutycycle_L),
+%tau[motor]*(dutycycle_Rc-dutycycle_R),
+%tau[motor]*(dutycycle_Fc-dutycycle_F),
+%tau[motor]*(dutycycle_Bc-dutycycle_B)]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+x_wind_quad : addrow(x_wind,x_motors);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+d_x_wind_quad : addrow(d_x_wind_quad,d_x_motors);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: section start ]
+Linearization
+   [wxMaxima: section end   ] */
+
+/* [wxMaxima: input   start ] */
+F_wind_quad : trigsimp(fullratsimp(jacobian(vector2list(d_x_wind_quad),vector2list(x_wind_quad))));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+G_wind_quad_motors : jacobian(vector2list(d_x_wind_quad),vector2list(u_motors));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+F_wind_quad_forward_trim : fullratsubst([T_sum_eq=T_sum],
+subst([%phi=0,%beta=0,wx=0,wy=0,wz=0,%theta-%alpha=%gamma,%alpha=theta],
+factor(trigreduce(F_wind_quad))));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+The control mix plant has no states and the equation is simply y=D_contmix *u. 
+The D_contmix matrix is shown below. The input to the control mix matrix are shown in u above.
+The output is u_motors. The equations are nonlinear so we used the jacobian of J(dutycycles,uPseudo).
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+D_contmix : fullratsimp(jacobian(vector2list(Dutycycle_vector),vector2list(uPseudo)));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Now since we have the control mix plant given by D above we can multiply G_quad  by D_contmix since
+dx = F*x + G*u_motors, u_motors = D_contmix*u, hence dx = F*x + G*D_contmix*u
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+G_wind_quad : G_wind_quad_motors.D_contmix;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+We can't observe alpha or beta
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+z_wind_quad : transpose([Vt,%theta,wy,h,%phi,wx,%psi,wz]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+C_wind_quad : jacobian(vector2list(z_wind_quad),vector2list(x_wind_quad));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+D_wind_quad : zeromatrix(8,4)$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: section start ]
+Fortran Output
+   [wxMaxima: section end   ] */
+
+/* [wxMaxima: input   start ] */
+with_stdout ("code/quad_wind_dynamics.f90",
+f90(F_wind_quad,G_wind_quad,C_wind_quad,D_wind_quad))$
+/* [wxMaxima: input   end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$

@@ -1,0 +1,114 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created with wxMaxima version 0.8.7 ] */
+
+/* [wxMaxima: title   start ]
+Wind Frame Dynamics
+   [wxMaxima: title   end   ] */
+
+/* [wxMaxima: input   start ] */
+if is(commonLoaded#true) then batchload("common.wxm")$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: section start ]
+Wind Frame Equations of Motion
+   [wxMaxima: section end   ] */
+
+/* [wxMaxima: subsect start ]
+Kinematics
+   [wxMaxima: subsect end   ] */
+
+/* [wxMaxima: input   start ] */
+F_b : genmatrix(F_b_,3,1)$ 
+M_b : genmatrix(M_b_,3,1)$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+C_wb : C3(%beta).C2(-%alpha)$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+v_rel_w : transpose([Vt,0,0])$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+dw_v_rel_w : transpose([d_Vt,0,0])$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+w_wb : transpose([0,0,d_beta]) + C3(%beta).transpose([0,-d_alpha,0])$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+db_v_rel_w : dw_v_rel_w + cross(w_wb,v_rel_w)$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+The inertia matrix J
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+J : matrix([Jx,-Jxy,-Jxz],[-Jxy,Jy,-Jyz],[-Jxz,-Jyz,Jz])$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+v_cm_b : transpose([U,V,W])$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+b_w_ib_b : invert(J).( M_b - cross(w_ib,J.w_ib))$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Checked against Aircraft Control and Simulation book 'Stevens and Lewis'  p.110
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+fullratsimp(subst([Jyz=0,Jxy=0],b_w_ib_b)[1])$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: subsect start ]
+Dynamics
+   [wxMaxima: subsect end   ] */
+
+/* [wxMaxima: comment start ]
+We now construct the state vector for the dynamcis in the stability axis.
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+x_wind : transpose([Vt, %alpha, %theta, wy, %beta, %phi, wx, %psi, wz])$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+eqn_d_v_w(i) := m*db_v_rel_w[i,1] = (C_wb.F_b)[i,1];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+eq_d_Vt : rhs(solve(eqn_d_v_w(1),d_Vt)[1])$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+eq_d_beta : rhs(solve(eqn_d_v_w(2),d_beta)[1])$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+eq_d_alpha : rhs(solve(eqn_d_v_w(3),d_alpha)[1])$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+d_x_wind : transpose([eq_d_Vt,eq_d_alpha,d_theta,b_w_ib_b[2,1],eq_d_beta,d_phi,b_w_ib_b[1,1],d_psi,b_w_ib_b[3,1]])$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: section start ]
+Fortran Output
+   [wxMaxima: section end   ] */
+
+/* [wxMaxima: input   start ] */
+with_stdout ("code/d_x_wind.f90", f90(d_x_wind));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+dynamicsWindFrameLoaded : true;
+/* [wxMaxima: input   end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$

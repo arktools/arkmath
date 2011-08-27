@@ -1,0 +1,61 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created with wxMaxima version 0.8.6 ] */
+
+/* [wxMaxima: title   start ]
+Optical Flow Sensor
+   [wxMaxima: title   end   ] */
+
+/* [wxMaxima: input   start ] */
+batch("common.wxm");
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: section start ]
+Nonlinear Measurement Equation
+   [wxMaxima: section end   ] */
+
+/* [wxMaxima: input   start ] */
+up_N : transpose([0,0,1]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+neg_bz_B : transpose([0,0,-1]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+dot(u,v) := u[1,1]*v[1,1]+u[2,1]*v[2,1]+u[3,1]*v[3,1];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+alpha : atan(dPixel/f);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+gamma : acos(dot(up_N,C_nb_quat.neg_bz_B));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+dGround : trigexpand((h-c_y)*tan(gamma+alpha)-h*tan(gamma));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+pX : cos(psi_quat)*vN*dt/dGround+sin(psi_quat)*vE*dt/dGround;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+pY : -sin(psi_quat)*vE*dt/dGround + cos(psi_quat)*vE*dt/dGround;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+H_optical : jacobian([pX,pY],[vN,vE]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Sanity check.
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+subst([a=1,b=0,c=0,d=0,dPixel=.001,f=.004,h=10,c_y=.1],H_optical);
+/* [wxMaxima: input   end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$

@@ -1,0 +1,86 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created with wxMaxima version 0.8.7 ] */
+
+/* [wxMaxima: input   start ] */
+kill(all);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+batchload("coma.mac");
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+load(lrats);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+blt(G) := y = u*fullratsubst([zI^2=x2,zI=x1],factor(expand(fullratsubst([s=2*(1-zI)/(T*(1+zI))],G))));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+declare(x1,mainvar,x2,mainvar,u,mainvar,s,mainvar);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+PidLowPassDiscrete : blt((kP+kI/s+s*kD));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+H : fullratsimp((kP+kI/s+kD*s*%omega/(s+%omega)));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+zero_eq : z = rhs(solve(ratnumer(H)=0,s)[2]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+solve(zero_eq,kI);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+sys : controller_canonical_form(H);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+A : sys[1]$ B : sys[2]$ C : sys[3]$ D : sys[4]$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Here we choose the antiwindup observer such that the eigenvalues of A-L.C are stable and
+both equal to -omega
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+L : transpose([1/kI,0]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+A_windUp : A-L.C;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+B_windUp : B-L*D;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+x : transpose([x1,x2]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+u : transpose([u1]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Lewis and Stevens pg 624
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+xDot : (A_windUp.x+B_windUp.u) + L*y;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+y : C.x+D*u;
+/* [wxMaxima: input   end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$

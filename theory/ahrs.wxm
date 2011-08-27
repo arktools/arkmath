@@ -1,0 +1,89 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created with wxMaxima version 11.04.0 ] */
+
+/* [wxMaxima: title   start ]
+Attitude Heading Reference System
+   [wxMaxima: title   end   ] */
+
+/* [wxMaxima: input   start ] */
+batchload("common.wxm");
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+z_mag : diag_matrix(s_x,s_y,s_z).
+(C_nb_quat.transpose([H_N,H_E,H_D])+transpose([b_x,b_y,b_z]));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+depends([s_x,s_y,s_z,b_x,b_y,b_z],t);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+x_sb : transpose([s_x,s_y,s_z,b_x,b_y,b_z]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+x_q : transpose([a,b,c,d]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+x_mag : addrow(x_q,x_sb);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+u_mag : transpose([e_wx,e_wy,e_wz]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+We can model the gyro bias dynamics as a random walk process, the scale factors as stationary, and the quaternion with quaternion differential.
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+d_x_mag : addrow(quat_diff(q_nb,est_w_ib),transpose(diff(x_sb,t)));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+H_mag : jacobian(vector2list(z_mag),vector2list(x_mag));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+A : subst([e_wx=0,e_wy=0,e_wz=0],jacobian(vector2list(d_x_mag),vector2list(x_mag)));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+B[mag] : jacobian(vector2list(d_x_mag),vector2list(u_mag));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+We verify that the system is observable using the observability grammian.
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+O_mag : fullratsimp(factor(addrow(H_mag,addrow(H_mag.A,
+addrow(H_mag.A.A,H_mag.A.A.A)))))$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Now we can compute the observable subspace. Using the reduced row echelon form of the transpose
+of the observability grammian. Note that the scale factors and biases are observable as 
+desired for estimation and correction.
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+Oss_mag : echelon(transpose(O_mag));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+Oss_mag_sub : subst([s_x=1,s_y=1,s_z=1,b_x=0,b_y=0,b_z=0,a=1,b=0,c=0,d=0,wx=1,wy=0,wz=0],Oss_mag);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+rank(Oss_mag_sub);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Therefore without gyros an attack may be inserted into magnetometer biases since they are in the unobservable subspace.
+   [wxMaxima: comment end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$

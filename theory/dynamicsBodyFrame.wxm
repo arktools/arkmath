@@ -1,0 +1,107 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created with wxMaxima version 0.8.7 ] */
+
+/* [wxMaxima: title   start ]
+Dynamics
+   [wxMaxima: title   end   ] */
+
+/* [wxMaxima: input   start ] */
+if is(commonLoaded#true) then batchload("common.wxm");
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: section start ]
+Body Frame Equations of Motion
+   [wxMaxima: section end   ] */
+
+/* [wxMaxima: subsect start ]
+Kinematics
+   [wxMaxima: subsect end   ] */
+
+/* [wxMaxima: input   start ] */
+F_b : genmatrix(F_b_,3,1)$ 
+M_b : genmatrix(M_b_,3,1)$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+C_wb : C3(%beta).C2(-%alpha)$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+v_b : transpose([U,V,W])$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+The inertia matrix J
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+J : matrix([Jx,-Jxy,-Jxz],[-Jxy,Jy,-Jyz],[-Jxz,-Jyz,Jz])$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+b_w_ib : invert(J).( (M_b) - cross(w_ib,J.w_ib))$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Checked against Aircraft Control and Simulation book 'Stevens and Lewis'  p.110
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+fullratsimp(subst([Jyz=0,Jxy=0],b_w_ib)[1])$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: subsect start ]
+Dynamics
+   [wxMaxima: subsect end   ] */
+
+/* [wxMaxima: comment start ]
+We now construct the state vector for the dynamcis in the stability axis.
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+x_body : transpose([U, W, %theta, wy, V, %phi, wx, %psi, wz])$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+db_v_b : F_b/m - cross(w_ib,v_b);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+v_n : C_nb_euler.v_b;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+d_x_body : transpose([db_v_b[1,1],db_v_b[3,1],d_theta,b_w_ib[2,1],db_v_b[2,1],d_phi,b_w_ib[1,1],d_psi,b_w_ib[3,1]]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: section start ]
+Command Inputs
+   [wxMaxima: section end   ] */
+
+/* [wxMaxima: comment start ]
+When piloting the quad we assume the commands will be forward velocity, side velocity, and altitude.
+So this is equivalent of a rotation of the body frame though phi and theta.
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+guidance_eq : C2(-%theta).C1(-%phi).v_b;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+guidance_sol : trigsimp(algsys([guidance_eq[1,1]=V_fwd,guidance_eq[2,1]=V_side,guidance_eq[3,1]=V_down],[U,V,W])[1]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: section start ]
+Fortran Output
+   [wxMaxima: section end   ] */
+
+/* [wxMaxima: input   start ] */
+with_stdout ("code/dynamicsBodyFrame.f90", f90(d_x_body));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+dynamicsBodyFrameLoaded : true;
+/* [wxMaxima: input   end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$

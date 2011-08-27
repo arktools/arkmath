@@ -1,0 +1,85 @@
+//NOTES: If a parameter is in ALL CAPS, it is something seen on the website
+//Otherwise I assumed it was a parameter we had onboard (something in the 
+//code not an actual command)
+//[message]=a broadcast messafe FROM the MAV Component (I assume there is a
+//way to listen in on these; if not, changing the code to detect the desired
+//state should not be too bad)
+//I ommited MAV_ from the front of the commands. All commands have it at the 
+//front.
+
+
+assuming waypoints have been read in
+
+if we have some waypoints
+
+
+
+	switch waypoint type
+	
+	case NAV_RETURN_TO_LAUNCH
+		set wayopint index to 0
+
+	case NAV_LAST
+		set waypoint index to 0
+
+	case DO_SET_HOME
+
+		if param#1 = 1
+		waypoint_list[0]=[lat=param#5,long=param#6,alt=param#7]
+		else if param#1 = 0
+		waypoint_list[0]=current location
+		else
+		skip
+
+	case DO_CHANGE_SPEED
+
+		if param#1 != 1
+		break (?) //I mean to skip this case, not sure on syntax
+
+		if param#2 != -1
+		target_speed= param#2
+
+		if param#3 != -1
+		target_throttle= param#3
+
+	case CMD_CONDITION_YAW
+
+		if param#3=-1
+		turn counterclockwise
+		else if param#3=1
+		turn clockwise
+		else
+		break (?)
+
+		if param#4=1
+		change yaw relatively
+		else if param#4=0
+		change yaw absolutley (an absolute angle)
+		else
+		break (?)
+
+
+		target_yaw=param#1;
+		
+		target_yaw_rate=param#2;
+
+	case NAV_WAYPOINT
+		SET_CURRENT_WAYPOINT=waypoints(waypoint_index)
+
+
+	default case
+		skip 
+
+	end
+
+
+	if [message]==WAYPOINT_REACHED
+	waypoint_counter++
+	
+	if waypoint_counter<=WAYPOINT_COINT
+	WAYPOINT_SET_CURRENT=waypoint_list(waypoint_counter)
+
+
+
+
+

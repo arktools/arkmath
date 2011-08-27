@@ -1,0 +1,62 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created with wxMaxima version 0.8.7 ] */
+
+/* [wxMaxima: title   start ]
+Dynamics
+   [wxMaxima: title   end   ] */
+
+/* [wxMaxima: input   start ] */
+if is(commonLoaded#true) then batchload("common.wxm");
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: section start ]
+Navigation Equations
+   [wxMaxima: section end   ] */
+
+/* [wxMaxima: subsect start ]
+Kinematics
+   [wxMaxima: subsect end   ] */
+
+/* [wxMaxima: input   start ] */
+v_b : transpose([U,V,W])$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: subsect start ]
+Dynamics
+   [wxMaxima: subsect end   ] */
+
+/* [wxMaxima: comment start ]
+We now construct the state vector for the dynamcis in the stability axis.
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+v_n : C_nb_euler.v_b;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+Vt:C_wb.v_b;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: section start ]
+Command Inputs
+   [wxMaxima: section end   ] */
+
+/* [wxMaxima: comment start ]
+When piloting the quad we assume the commands will be forward velocity, side velocity, and altitude.
+So this is equivalent of a rotation of the body frame though phi and theta.
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: section start ]
+Fortran Output
+   [wxMaxima: section end   ] */
+
+/* [wxMaxima: input   start ] */
+with_stdout ("code/navigationEquations.f90", f90(v_n));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+navigationEquations : true;
+/* [wxMaxima: input   end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$

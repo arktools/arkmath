@@ -1,0 +1,99 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created with wxMaxima version 0.8.7 ] */
+
+/* [wxMaxima: input   start ] */
+kill(all);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+if is(commonLoaded#true) then batchload("common.wxm");
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+eq_1 : e2 = r2-x2;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+eq_2 : e1=e2*(k21+k22)/(s+p2)-x1;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+eq_3 : u0=(k11+k12)/(s+p1)*e1;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+K: transpose([k11,k12,k21,k22]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+u0 : rhs(subst([eq_2,eq_1],eq_3));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+JuK : jacobian([u0],vector2list(K));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+y : transpose([r1-x1, r1-x1, r2-x2, r2-x2]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+JuK.K.y;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+x : transpose([x1, x2]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+r : transpose([r2]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+z : transpose([x1, x2]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+H : jacobian(vector2list(z),vector2list(x));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+C : jacobian(vector2list(y),vector2list(x));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+F : jacobian(vector2list(y),vector2list(r));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+dx : transpose([dx1,dx2]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Note that dx has no dependence on the reference input, this would occur if there were
+integrators in the feed forward path.
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+G : jacobian(vector2list(dx),vector2list(r));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+u(y) =(approx) Ju.y + u0,   where when r2=0, x1=0, and x2=0, will equal 0
+so we can use the linear approximation   u = Ju.y around the trim condition
+
+We can this formulate the optimal control problem by linearizing at each step until the solution
+converges using the cost equations:
+
+J = integral ( x'.P.x + u'.R.u ) dt
+
+And using the fact that u = f(x,K).y = (approx) JuK.K.y
+And therefore we can substitute into the equation above:
+
+J = integral ( x'.(P + C'.K'.JuK'.R.JuK.K.C).x ) dt
+
+where JuK is the jacobian of u w.r.t. K (the constant gain matrix)
+   [wxMaxima: comment end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$

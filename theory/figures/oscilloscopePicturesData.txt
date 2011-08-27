@@ -1,0 +1,12 @@
+Horizontal Axis : 5ms/div
+Vertical Axis : 1V/div
+
+
+Autopilot signal
+17.5ms
+5V
+
+Standard Signal
+20ms
+3.5V
+

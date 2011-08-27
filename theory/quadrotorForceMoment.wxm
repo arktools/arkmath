@@ -1,0 +1,191 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created with wxMaxima version 0.8.7 ] */
+
+/* [wxMaxima: title   start ]
+Quadrotor Force and Moment Models
+   [wxMaxima: title   end   ] */
+
+/* [wxMaxima: input   start ] */
+if is(commonLoaded#true) then batchload("common.wxm")$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: section start ]
+Propulsion
+   [wxMaxima: section end   ] */
+
+/* [wxMaxima: comment start ]
+When finding G we need to express dstate in terms of the input ratios and thrust sums. This means we need to substitute
+all occurences of T_i with the ratios.
+As a rough example The equation in the x direction should be:
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: comment start ]
+'Bond Graph Dynamic Modeling and Stabilization of a Quad-Rotor Helicopter'
+ page 3 equations for Thrust vs Rpm
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+RPM(dutycyle) := sqrt(dutycycle)*KV*2*%pi/60*batVolt$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Most of these are constants so we will substitute the constant terms as gamma.
+Gamma = (chord*pi^2*rho*(theta_tau-phi_tau)*batVolt^2*KV^2*liftCurveSlope*nBlades*rBlade^3)/3600
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+Thrust(dutycycle) := ''(C[T]*rho*%pi*rBlade^4*RPM(dutycycle)^2);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+http://www.aveox.com/DC.aspx  Equations for torque calculation in terms of RPM
+I = Current 
+Inl = No load current 
+J = Torque (oz-in/A) 
+Kb = Voltage constant (Volt/1000 RPM) 
+Kt = Torque constant (oz-In/A) 
+Pi = Power input (Watts)  
+Rm = Terminal resistance 
+RPM = Revolutions/minute 
+V = Voltage
+
+Torque constant: Kt=Kb x 1.345 
+Current draw of motor: I = [V-(Kb x kRPM)]/Rm 
+Torque output of motor: J = (Kt x I) - (Kt x Inl) 
+RPM of motor: kRPM = (V - RmI) / Kb 
+KV = 1000/Kb
+Kb = 1000/KV
+0.000968504759=1.345
+
+CHeck current draw of motor equation.
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: comment start ]
+This equation looks wrong so redefining.
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+Torque(dutycycle):= ''(C[Q]*rho*%pi*rBlade^5*RPM(dutycycle)^2);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+T_L : Thrust(dutycycle_L)$ T_R : Thrust(dutycycle_R)$ T_F : Thrust(dutycycle_F)$ T_B : Thrust(dutycycle_B)$
+t_L : Torque(dutycycle_L)$ t_R : Torque(dutycycle_R)$ t_F : Torque(dutycycle_F)$ t_B : Torque(dutycycle_B)$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+F_b_T_quad : factor(transpose([0,0,-1*(T_F+T_B+T_L+T_R)]));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+M_b_T_quad : factor(fullratsimp(transpose([(T_L - T_R)*dm , (T_F-T_B)*dm, t_L+t_R-t_F-t_B])));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+u_motors : transpose([dutycycle_Lc,dutycycle_Rc,dutycycle_Fc,dutycycle_Bc]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: section start ]
+Aerodynamics
+   [wxMaxima: section end   ] */
+
+/* [wxMaxima: comment start ]
+Check these equaitons.
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+Cl : 2*%pi*%alpha$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Assuming an uncambered lifting surface ( the frame) we can estimate the drag polar as:
+home.anadolu.edu.tr/~mcavcar/common/Aerodynamicforces.pdf
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+Cd : Cd0 + K_cd_cl*Cl^2$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+NOTE: This is probably wrong
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+Cs : 2*%pi*%beta$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+F_w_A_quad : transpose([-Cd*.5*%rho*Vt^2*s_frame,-Cs*.5*%rho*Vt^2*s_frame_side,-Cl*.5*%rho*Vt^2*s_frame]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Neglecting aerodynamic moments
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+M_b_A_quad : transpose([0,0,0]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: section start ]
+Mixing
+   [wxMaxima: section end   ] */
+
+/* [wxMaxima: input   start ] */
+T_sum_eq : dutycycle_F+dutycycle_B+dutycycle_L+dutycycle_R$
+delta_F_B_eq : dutycycle_F-dutycycle_B$
+delta_L_R_eq : dutycycle_L-dutycycle_R$
+delta_LR_FB_eq : dutycycle_L+dutycycle_R-dutycycle_F-dutycycle_B$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+uToDutycycle : algsys([T_sum=T_sum_eq,
+delta_F_B=delta_F_B_eq ,
+delta_L_R=delta_L_R_eq,
+delta_LR_FB=delta_LR_FB_eq],
+[dutycycle_L,dutycycle_R,dutycycle_F,dutycycle_B])[1];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+Dutycycle_vector:transpose([rhs(uToDutycycle[1]),rhs(uToDutycycle[2]),rhs(uToDutycycle[3]),rhs(uToDutycycle[4])]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Now we create the control premixing matrix. This decouples the equations of motion.
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+u : subst([dutycycle_R=dutycycle_Rc,dutycycle_L=dutycycle_Lc,dutycycle_F=dutycycle_Fc,dutycycle_B=dutycycle_Bc],
+transpose([T_sum_eq,delta_F_B_eq,delta_L_R_eq,delta_LR_FB_eq]));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+uPseudo : transpose([T_sum, delta_F_B,delta_L_R,delta_LR_FB]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: section start ]
+Sum of Forces and Moments
+   [wxMaxima: section end   ] */
+
+/* [wxMaxima: input   start ] */
+F_b_quad : C_bw . F_w_A_quad + F_b_T_quad + m*C_bn_euler.g_n$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+M_b_quad : M_b_A_quad + M_b_T_quad;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: section start ]
+Fortran Output
+   [wxMaxima: section end   ] */
+
+/* [wxMaxima: input   start ] */
+with_stdout ("code/quadForceMoments.f90",
+f90(F_b_T_quad,F_w_A_quad,M_b_T_quad,M_b_A_quad));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+quadrotorFoceMomentsLoaded : true;
+/* [wxMaxima: input   end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$

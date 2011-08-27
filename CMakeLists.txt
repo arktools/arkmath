@@ -1,4 +1,4 @@
-project (arkMath)
+project (arkmath)
 
 # Requried cmake version
 cmake_minimum_required (VERSION 2.6)

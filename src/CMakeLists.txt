@@ -21,6 +21,7 @@ set_target_properties(${PROJECT_NAME} PROPERTIES VERSION ${LIBRARY_VERSION}
 install(FILES
 	utilities.hpp
 	GpsIns.hpp
+	storate_adaptors.hpp
 	DESTINATION include/${PROJECT_NAME}
 	)
 

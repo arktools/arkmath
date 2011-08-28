@@ -160,25 +160,11 @@ install(FILES
 	DESTINATION lib/pkgconfig
 	)
 
-#
-# internal library list definition / dep summary
-message(STATUS "================================================")
-message(STATUS "\tLIBRARY\t\t\tBUILDING")
-message(STATUS "================================================")
-
-message(STATUS "\tBoost\t\t\t${Boost_FOUND}")
-if (Boost_FOUND)
-endif ()
-
-message(STATUS "\tBoost Numeric Bindings\t${BOOSTNUMERICBINDINGS_FOUND}")
-if (BOOSTNUMERIC_BINDINGS_FOUND)
-endif ()
-
-message(STATUS "\tLapack\t\t\t${LAPACK_FOUND}")
-if (LAPACK_FOUND)
-endif ()
-
-message(STATUS "================================================")
+# summary
+feature_summary(WHAT ENABLED_FEATURES VAR DESCRIPTION "enabled features: " VAR enabledFeaturesText)
+message(STATUS "${enabledFeaturesText}")
+feature_summary(WHAT DISABLED_FEATURES VAR DESCRIPTION "disabled features: " VAR disabledFeaturesText)
+message(STATUS "${disabledFeaturesText}")
 
 # project wide flags
 include_directories( ${PROJECT_SOURCE_DIR}/src ${PROJECT_BINARY_DIR}/src)

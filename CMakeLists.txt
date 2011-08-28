@@ -32,6 +32,7 @@ set(CMAKE_MODULE_PATH
 
 include (CTest)
 include(ExternalProject)
+include(FeatureSummary)
 
 # settings
 option(DEV_MODE "Setup paths for developer testing." OFF)

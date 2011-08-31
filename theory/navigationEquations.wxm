@@ -51,7 +51,7 @@ Fortran Output
    [wxMaxima: section end   ] */
 
 /* [wxMaxima: input   start ] */
-with_stdout ("code/navigationEquations.f90", f90(v_n));
+with_stdout ("../src/gen_fortran/navigationEquations.f90", f90(v_n));
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */

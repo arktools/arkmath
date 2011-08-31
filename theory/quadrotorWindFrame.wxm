@@ -150,7 +150,7 @@ Fortran Output
    [wxMaxima: section end   ] */
 
 /* [wxMaxima: input   start ] */
-with_stdout ("code/quad_wind_dynamics.f90",
+with_stdout ("../src/gen_fortran/quad_wind_dynamics.f90",
 f90(F_wind_quad,G_wind_quad,C_wind_quad,D_wind_quad))$
 /* [wxMaxima: input   end   ] */
 

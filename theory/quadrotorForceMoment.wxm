@@ -179,7 +179,7 @@ Fortran Output
    [wxMaxima: section end   ] */
 
 /* [wxMaxima: input   start ] */
-with_stdout ("code/quadForceMoments.f90",
+with_stdout ("../src/gen_fortran/quadForceMoments.f90",
 f90(F_b_T_quad,F_w_A_quad,M_b_T_quad,M_b_A_quad));
 /* [wxMaxima: input   end   ] */
 

@@ -1,0 +1,9 @@
+C_nb_quat(1,1) = -d**2-c**2+b**2+a**2
+C_nb_quat(1,2) = 2*b*c-2*a*d
+C_nb_quat(1,3) = 2*b*d+2*a*c
+C_nb_quat(2,1) = 2*a*d+2*b*c
+C_nb_quat(2,2) = -d**2+c**2-b**2+a**2
+C_nb_quat(2,3) = 2*c*d-2*a*b
+C_nb_quat(3,1) = 2*b*d-2*a*c
+C_nb_quat(3,2) = 2*c*d+2*a*b
+C_nb_quat(3,3) = d**2-c**2-b**2+a**2

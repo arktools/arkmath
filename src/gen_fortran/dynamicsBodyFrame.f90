@@ -1,0 +1,9 @@
+d_x_body(1,1) = -wy*W+wz*V+F_b_(1,1)/m
+d_x_body(2,1) = -wx*V+wy*U+F_b_(3,1)/m
+d_x_body(3,1) = cos(%phi)*wy-sin(%phi)*wz
+d_x_body(4,1) = (Jxy*Jz+Jxz*Jyz)*(-wy*(Jz*wz-Jyz*wy-Jxz*wx)+wz*(-Jyz*wz+Jy*wy-Jxy*wx)+M_b_(1,1))/(Jx*(Jy*Jz-Jyz**2)-Jxy*(Jxy*Jz+Jxz*Jyz)-Jxz*(Jxy*Jyz+Jxz*Jy))+(Jx*Jz-Jxz**2)*(wx*(Jz*wz-Jyz*wy-Jxz*wx)-wz*(-Jxz*wz-Jxy*wy+Jx*wx)+M_b_(2,1))/(Jx*(Jy*Jz-Jyz**2)-Jxy*(Jxy*Jz+Jxz*Jyz)-Jxz*(Jxy*Jyz+Jxz*Jy))+(Jx*Jyz+Jxy*Jxz)*(-wx*(-Jyz*wz+Jy*wy-Jxy*wx)+wy*(-Jxz*wz-Jxy*wy+Jx*wx)+M_b_(3,1))/(Jx*(Jy*Jz-Jyz**2)-Jxy*(Jxy*Jz+Jxz*Jyz)-Jxz*(Jxy*Jyz+Jxz*Jy))
+d_x_body(5,1) = wx*W-wz*U+F_b_(2,1)/m
+d_x_body(6,1) = tan(%theta)*(cos(%phi)*wz+sin(%phi)*wy)+wx
+d_x_body(7,1) = (Jy*Jz-Jyz**2)*(-wy*(Jz*wz-Jyz*wy-Jxz*wx)+wz*(-Jyz*wz+Jy*wy-Jxy*wx)+M_b_(1,1))/(Jx*(Jy*Jz-Jyz**2)-Jxy*(Jxy*Jz+Jxz*Jyz)-Jxz*(Jxy*Jyz+Jxz*Jy))+(Jxy*Jz+Jxz*Jyz)*(wx*(Jz*wz-Jyz*wy-Jxz*wx)-wz*(-Jxz*wz-Jxy*wy+Jx*wx)+M_b_(2,1))/(Jx*(Jy*Jz-Jyz**2)-Jxy*(Jxy*Jz+Jxz*Jyz)-Jxz*(Jxy*Jyz+Jxz*Jy))+(Jxy*Jyz+Jxz*Jy)*(-wx*(-Jyz*wz+Jy*wy-Jxy*wx)+wy*(-Jxz*wz-Jxy*wy+Jx*wx)+M_b_(3,1))/(Jx*(Jy*Jz-Jyz**2)-Jxy*(Jxy*Jz+Jxz*Jyz)-Jxz*(Jxy*Jyz+Jxz*Jy))
+d_x_body(8,1) = (cos(%phi)*wz+sin(%phi)*wy)/cos(%theta)
+d_x_body(9,1) = (Jxy*Jyz+Jxz*Jy)*(-wy*(Jz*wz-Jyz*wy-Jxz*wx)+wz*(-Jyz*wz+Jy*wy-Jxy*wx)+M_b_(1,1))/(Jx*(Jy*Jz-Jyz**2)-Jxy*(Jxy*Jz+Jxz*Jyz)-Jxz*(Jxy*Jyz+Jxz*Jy))+(Jx*Jyz+Jxy*Jxz)*(wx*(Jz*wz-Jyz*wy-Jxz*wx)-wz*(-Jxz*wz-Jxy*wy+Jx*wx)+M_b_(2,1))/(Jx*(Jy*Jz-Jyz**2)-Jxy*(Jxy*Jz+Jxz*Jyz)-Jxz*(Jxy*Jyz+Jxz*Jy))+(Jx*Jy-Jxy**2)*(-wx*(-Jyz*wz+Jy*wy-Jxy*wx)+wy*(-Jxz*wz-Jxy*wy+Jx*wx)+M_b_(3,1))/(Jx*(Jy*Jz-Jyz**2)-Jxy*(Jxy*Jz+Jxz*Jyz)-Jxz*(Jxy*Jyz+Jxz*Jy))

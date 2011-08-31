@@ -140,7 +140,7 @@ Fortran Output
    [wxMaxima: section end   ] */
 
 /* [wxMaxima: input   start ] */
-with_stdout ("code/quad_body_dynamics.f90",
+with_stdout ("../src/gen_fortran/quad_body_dynamics.f90",
 f90(F_body_quad,G_body_quad,C_body_quad,D_body_quad))$
 /* [wxMaxima: input   end   ] */
 

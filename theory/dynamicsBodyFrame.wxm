@@ -96,7 +96,7 @@ Fortran Output
    [wxMaxima: section end   ] */
 
 /* [wxMaxima: input   start ] */
-with_stdout ("code/dynamicsBodyFrame.f90", f90(d_x_body));
+with_stdout ("../src/gen_fortran/dynamicsBodyFrame.f90", f90(d_x_body));
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */

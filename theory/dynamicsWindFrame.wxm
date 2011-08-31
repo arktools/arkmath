@@ -103,7 +103,7 @@ Fortran Output
    [wxMaxima: section end   ] */
 
 /* [wxMaxima: input   start ] */
-with_stdout ("code/d_x_wind.f90", f90(d_x_wind));
+with_stdout ("../src/gen_fortran/d_x_wind.f90", f90(d_x_wind));
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */

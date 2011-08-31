@@ -45,10 +45,12 @@ e_u : est_u - u;
 State Dynamics
    [wxMaxima: section end   ] */
 
-/* [wxMaxima: fold    start ] */
+/* [wxMaxima: comment start ]
+Is this correct? thought it should be w_nb.
+   [wxMaxima: comment end   ] */
 
 /* [wxMaxima: input   start ] */
-diff_q_nb : quat_diff(q_nb,w_nb);
+diff_q_nb : quat_diff(q_nb,transpose([wx,wy,wz]));
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
@@ -81,7 +83,9 @@ f_att : transpose(makelist(f[i,1],i,1,4));
 f_vp : transpose(makelist(f[i,1],i,5,10));
 /* [wxMaxima: input   end   ] */
 
-/* [wxMaxima: fold    end   ] */
+/* [wxMaxima: input   start ] */
+f_att;
+/* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: section start ]
 Estimated State Dynamics

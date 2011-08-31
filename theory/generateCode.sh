@@ -297,7 +297,7 @@ cat $f90Path/z_mag.f90 | sed \
 	-e "s/(1,/(0,/g" -e "s/,1)/,0)/g" \
 	-e "s/(2,/(1,/g" -e "s/,2)/,1)/g" \
 	-e "s/(3,/(2,/g" -e "s/,3)/,2)/g" \
-	> ${outPath}/ins_H_mag.hpp
+	> ${outPath}/z_mag.hpp
 
 cat $f90Path/mag_dec_dip.f90 | sed \
 	-e "s/$/;/g" \
@@ -308,7 +308,7 @@ cat $f90Path/mag_dec_dip.f90 | sed \
 	-e "s/(1,/(0,/g" -e "s/,1)/,0)/g" \
 	-e "s/(2,/(1,/g" -e "s/,2)/,1)/g" \
 	-e "s/(3,/(2,/g" -e "s/,3)/,2)/g" \
-	> ${outPath}/ins_H_mag.hpp
+	> ${outPath}/mag_dec_dip.hpp
 
 cat $f90Path/ins_H_mag.f90 | sed \
 	-e "s/$/;/g" \

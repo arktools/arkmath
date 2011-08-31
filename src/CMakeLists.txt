@@ -3,15 +3,11 @@ include_directories(${BOOSTNUMERICBINDINGS_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
 file(GLOB  generalSources "*.c*")
 file(GLOB  generalHeaders "*.h*")
 
-file(GLOB  navigationSources "gen/navigation/*.c*")
-file(GLOB  navigationHeaders "gen/navigation/*.h*")
-
-file(GLOB  dynamicsSources "gen/dynamics/*.c*")
-file(GLOB  dynamicsHeaders "gen/dynamics/*.h*")
+file(GLOB  gen_cppHeaders "gen_cpp/*.h*")
+file(GLOB  gen_fortranHeaders "gen_cpp/*.f*")
+file(GLOB  gen_sciHeaders "gen_sci/*.sci")
 
 add_library(${PROJECT_NAME}
-	${navigationSources}
-	${dynamicsSources}
 	${generalSources}
 	)
 
@@ -21,8 +17,9 @@ set_target_properties(${PROJECT_NAME} PROPERTIES VERSION ${LIBRARY_VERSION}
 	SOVERSION ${LIBRARY_SOVERSION})
 
 install(FILES ${generalHeaders} DESTINATION include/${PROJECT_NAME})
-install(FILES ${navigationHeaders} DESTINATION include/${PROJECT_NAME}/gen/navigation)
-install(FILES ${dynamicsHeaders} DESTINATION include/${PROJECT_NAME}/gen/dynamics)
+install(FILES ${gen_cppHeaders} DESTINATION include/${PROJECT_NAME}/gen_cpp)
+install(FILES ${gen_fortranHeaders} DESTINATION include/${PROJECT_NAME}/gen_fortran)
+install(FILES ${gen_sciHeaders} DESTINATION include/${PROJECT_NAME}/gen_sciHeaders)
 
 install(TARGETS ${PROJECT_NAME} DESTINATION lib EXPORT ${PROJECT_NAME}-targets)
 install(EXPORT ${PROJECT_NAME}-targets DESTINATION lib/${PROJECT_NAME})

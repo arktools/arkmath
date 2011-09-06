@@ -86,7 +86,6 @@ endif()
   #set(CPACK_SOURCE_STRIP_FILES "")
 #endif(WIN32 and not UNIX)
 #set(CPACK_PACKAGE_EXECUTABLES "MyExecutable" "My Executable")
-
 include(CPack)
 
 # disallow in-source build

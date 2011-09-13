@@ -17,6 +17,7 @@
  */
 
 #include "GeoMag.hpp"
+#include <stdexcept>
 
 namespace mavsim
 {
@@ -24,6 +25,7 @@ namespace mavsim
 GeoMag::GeoMag(std::string file, int maxDeg)
 {
     wmmdat = fopen(file.c_str(),"r");
+	if (wmmdat == NULL) throw std::runtime_error("unable to load magnetic coefficients file: " + file);
     p = snorm;
 
     /* INITIALIZE CONSTANTS */

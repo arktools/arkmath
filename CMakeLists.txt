@@ -99,6 +99,7 @@ include(MacroCopyFile)
 include(MacroSetDefault)
 include(language_support_v2)
 include(MacroAddLinkFlags)
+include(FindBOOSTNUMERICBINDINGS)
 
 # settings
 option(DEV_MODE "Setup paths for developer testing." OFF)
@@ -121,27 +122,15 @@ enable_language(CXX)
 # add make dist target
 add_custom_target(dist COMMAND ${CMAKE_MAKE_PROGRAM} package_source)
 
-# find libraries with cmake modules
-find_package(LAPACK)
-find_package(Boost 1.40.0 REQUIRED COMPONENTS thread-mt system-mt)
-find_package(BOOSTNUMERICBINDINGS)
-
 # external projects
 set(EP_BASE_DIR "${CMAKE_BINARY_DIR}/CMakeExternals")
 set_property(DIRECTORY PROPERTY EP_BASE ${EP_BASE_DIR})
+set(EP_INSTALL_PREFIX ${CMAKE_INSTALL_PREFIX}/${PROJECT_NAME}-external)
 
-if( NOT BOOSTNUMERICBINDINGS)
-    ExternalProject_Add(boost-numeric-bindings
-        GIT_REPOSITORY "http://git.tiker.net/trees/boost-numeric-bindings.git"
-		GIT_TAG ${BOOSTNUMERICBINDINGS_TAG}
-		CONFIGURE_COMMAND ""
-		BUILD_COMMAND ""
-		INSTALL_COMMAND ""
-		BUILD_IN_SOURCE 1
-	)
-	set(BOOSTNUMERICBINDINGS_FOUND TRUE)
-	set(BOOSTNUMERICBINDINGS_INCLUDE_DIRS ${EP_BASE_DIR}/Source/boost-numeric-bindings)
-endif()
+# find libraries with cmake modules
+find_package(LAPACK)
+find_package(Boost 1.40.0 REQUIRED COMPONENTS thread-mt system-mt)
+find_or_build_boostnumericbindings(${BOOSTNUMERICBINDINGS_TAG} ${EP_BASE_DIR} ${EP_INSTALL_PREFIX})
 
 # data directory
 if(DEV_MODE)

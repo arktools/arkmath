@@ -1,5 +1,5 @@
 /* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
-/* [ Created with wxMaxima version 11.08.0 ] */
+/* [ Created with wxMaxima version 0.8.5 ] */
 
 /* [wxMaxima: title   start ]
 Inertial Navigation Equations
@@ -50,11 +50,11 @@ State Dynamics
    [wxMaxima: section end   ] */
 
 /* [wxMaxima: comment start ]
-Is this correct? thought it should be w_nb.
+Misalignment is measured from navigation to body frame.
    [wxMaxima: comment end   ] */
 
 /* [wxMaxima: input   start ] */
-diff_q_nb : quat_diff(q_nb,transpose([wx,wy,wz]));
+diff_q_nb : quat_diff(q_nb,w_nb);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
@@ -74,7 +74,7 @@ diff_h : -Vd;
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-f : transpose([diff_q_nb[1,1],diff_q_nb[2,1],
+f: transpose([diff_q_nb[1,1],diff_q_nb[2,1],
 diff_q_nb[3,1],diff_q_nb[4,1],diff_v_n[1,1],
 diff_v_n[2,1],diff_v_n[3,1],diff_L,diff_l,diff_h]);
 /* [wxMaxima: input   end   ] */
@@ -87,10 +87,6 @@ f_att : transpose(makelist(f[i,1],i,1,4));
 f_vp : transpose(makelist(f[i,1],i,5,10));
 /* [wxMaxima: input   end   ] */
 
-/* [wxMaxima: input   start ] */
-f_att;
-/* [wxMaxima: input   end   ] */
-
 /* [wxMaxima: section start ]
 Estimated State Dynamics
    [wxMaxima: section end   ] */
@@ -100,7 +96,7 @@ est_diff_q_nb : quat_diff(est_q_nb,est_w_nb);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-est_diff_v_n : est_C_nb_quat.est_f_b - cross(2*w_ie + w_en,est_v_n)+est_g_n;
+est_diff_v_n : est_C_nb_quat.est_f_b - cross(2*est_w_ie + est_w_en,est_v_n)+est_g_n;
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
@@ -128,10 +124,6 @@ Error State Dynamics
 /* [wxMaxima: input   start ] */
 diff_d_q_nb : est_diff_q_nb - diff_q_nb;
 /* [wxMaxima: input   end   ] */
-
-/* [wxMaxima: comment start ]
-Note there is no dependence on dc or dd here.
-   [wxMaxima: comment end   ] */
 
 /* [wxMaxima: input   start ] */
 diff_dv_n : est_diff_v_n - diff_v_n;
@@ -181,8 +173,17 @@ zeroErrors : [e_a=0,e_b=0,e_c=0,e_d=0,e_Vn=0,e_Ve=0,e_Vd=0,e_l=0,e_L=0,e_h=0,e_f
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-F : ratsimp(subst(zeroErrors,jacobian(makelist(e_f[i,1],i,1,10),
-makelist(e_x[i,1],i,1,10))));
+F_w : factor(fullratsimp(subst(zeroErrors,jacobian(makelist(e_f[i,1],i,1,10),
+makelist(e_x[i,1],i,1,10)))));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Note that here wx=0,wy=0,wz=0 since this is this is a good place to linearize for stable flight and it 
+significantly simplifies the expression.
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+F : factor(fullratsimp(subst([wx=0,wy=0,wz=0],F_w)));
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
@@ -262,11 +263,11 @@ z_mag : transpose(quat2dcm(q_nb)).mag;
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-H_mag : factor(jacobian(makelist(z_mag[i,1],i,1,3),makelist(x[i,1],i,10)));
+H_mag : factor(jacobian(makelist(z_mag[i,1],i,1,3),makelist(x[i,1],i,1,10)));
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-H_mag_att : factor(jacobian(makelist(z_mag[i,1],i,1,3),makelist(x[i,1],i,4)));
+H_mag_att : factor(jacobian(makelist(z_mag[i,1],i,1,3),makelist(x[i,1],i,1,4)));
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: section start ]
@@ -292,7 +293,7 @@ e_PosLat=0,e_PosLon=0,e_h=0],e_gps.transpose(e_gps));
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-H_gps : factor(jacobian(makelist(z_gps[i,1],i,1,6),makelist(x[i,1],i,10)));
+H_gps : factor(jacobian(makelist(z_gps[i,1],i,1,6),makelist(x[i,1],i,1,10)));
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */

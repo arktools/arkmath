@@ -46,6 +46,7 @@ cat $f90Path/ins_dynamics_f.f90 | sed \
 	-e "s/$/;/g" \
 	-e "/^.*) = 0;$/d" \
 	-e "s/a\*\*2/aa/g" -e "s/b\*\*2/bb/g" -e "s/c\*\*2/cc/g" -e "s/d\*\*2/dd/g" \
+	-e "s/Ve\*\*2/Ve*Ve/g" -e "s/Vn\*\*2/Vn*Vn/g" -e "s/Vd\*\*2/Vd*Vd/g" \
 	-e "s/cos(L)/cosL/g" -e "s/sin(L)/sinL/g" -e "s/tan(L)/tanL/g" \
 	-e "s/sec(L)/secL/g" \
 	-e "s/Vn\*\*2/Vn*Vn/g" \
@@ -74,6 +75,7 @@ cat $f90Path/ins_dynamics_f_att.f90 | sed \
 	-e "s/$/;/g" \
 	-e "/^.*) = 0;$/d" \
 	-e "s/a\*\*2/aa/g" -e "s/b\*\*2/bb/g" -e "s/c\*\*2/cc/g" -e "s/d\*\*2/dd/g" \
+	-e "s/Ve\*\*2/Ve*Ve/g" -e "s/Vn\*\*2/Vn*Vn/g" -e "s/Vd\*\*2/Vd*Vd/g" \
 	-e "s/cos(L)/cosL/g" -e "s/sin(L)/sinL/g" -e "s/tan(L)/tanL/g" \
 	-e "s/sec(L)/secL/g" \
 	-e "s/Vn\*\*2/Vn*Vn/g" \
@@ -102,6 +104,7 @@ cat $f90Path/ins_dynamics_f_vp.f90 | sed \
 	-e "s/$/;/g" \
 	-e "/^.*) = 0;$/d" \
 	-e "s/a\*\*2/aa/g" -e "s/b\*\*2/bb/g" -e "s/c\*\*2/cc/g" -e "s/d\*\*2/dd/g" \
+	-e "s/Ve\*\*2/Ve*Ve/g" -e "s/Vn\*\*2/Vn*Vn/g" -e "s/Vd\*\*2/Vd*Vd/g" \
 	-e "s/cos(L)/cosL/g" -e "s/sin(L)/sinL/g" -e "s/tan(L)/tanL/g" \
 	-e "s/sec(L)/secL/g" \
 	-e "s/Vn\*\*2/Vn*Vn/g" \
@@ -130,6 +133,7 @@ cat $f90Path/ins_error_dynamics_F.f90 | sed \
 	-e "s/$/;/g" \
 	-e "/^.*) = 0;$/d" \
 	-e "s/a\*\*2/aa/g" -e "s/b\*\*2/bb/g" -e "s/c\*\*2/cc/g" -e "s/d\*\*2/dd/g" \
+	-e "s/Ve\*\*2/Ve*Ve/g" -e "s/Vn\*\*2/Vn*Vn/g" -e "s/Vd\*\*2/Vd*Vd/g" \
 	-e "s/cos(L)/cosL/g" -e "s/sin(L)/sinL/g" -e "s/tan(L)/tanL/g" \
 	-e "s/sec(L)/secL/g" \
 	-e "s/secL\*\*2/secLsecL/g" \
@@ -160,6 +164,7 @@ cat $f90Path/ins_error_dynamics_F_att.f90 | sed \
 	-e "s/$/;/g" \
 	-e "/^.*) = 0;$/d" \
 	-e "s/a\*\*2/aa/g" -e "s/b\*\*2/bb/g" -e "s/c\*\*2/cc/g" -e "s/d\*\*2/dd/g" \
+	-e "s/Ve\*\*2/Ve*Ve/g" -e "s/Vn\*\*2/Vn*Vn/g" -e "s/Vd\*\*2/Vd*Vd/g" \
 	-e "s/cos(L)/cosL/g" -e "s/sin(L)/sinL/g" -e "s/tan(L)/tanL/g" \
 	-e "s/sec(L)/secL/g" \
 	-e "s/secL\*\*2/secLsecL/g" \
@@ -190,6 +195,7 @@ cat $f90Path/ins_error_dynamics_F_vp.f90 | sed \
 	-e "s/$/;/g" \
 	-e "/^.*) = 0;$/d" \
 	-e "s/a\*\*2/aa/g" -e "s/b\*\*2/bb/g" -e "s/c\*\*2/cc/g" -e "s/d\*\*2/dd/g" \
+	-e "s/Ve\*\*2/Ve*Ve/g" -e "s/Vn\*\*2/Vn*Vn/g" -e "s/Vd\*\*2/Vd*Vd/g" \
 	-e "s/cos(L)/cosL/g" -e "s/sin(L)/sinL/g" -e "s/tan(L)/tanL/g" \
 	-e "s/sec(L)/secL/g" \
 	-e "s/secL\*\*2/secLsecL/g" \

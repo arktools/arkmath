@@ -1,5 +1,5 @@
 /* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
-/* [ Created with wxMaxima version 0.8.7 ] */
+/* [ Created with wxMaxima version 0.8.5 ] */
 
 /* [wxMaxima: title   start ]
 Common Equations
@@ -26,15 +26,7 @@ Definitions
    [wxMaxima: section end   ] */
 
 /* [wxMaxima: input   start ] */
-est_f_b : transpose([fx+e_fx,fy+e_fy,fz+e_fz])$
-/* [wxMaxima: input   end   ] */
-
-/* [wxMaxima: input   start ] */
 w_ie : transpose([Omega*cos(L),0,-Omega*sin(L)])$
-/* [wxMaxima: input   end   ] */
-
-/* [wxMaxima: input   start ] */
-est_w_ie : transpose([Omega*cos(L+e_L),0,-Omega*sin(L+e_L)])$
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
@@ -42,11 +34,7 @@ f_b : transpose([fx,fy,fz])$
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-w_en : transpose([Ve/R,-Vn/R,-Ve*tan(L)/R])$
-/* [wxMaxima: input   end   ] */
-
-/* [wxMaxima: input   start ] */
-est_w_en : transpose([(Ve+e_Ve)/(R+e_h),-(Vn+e_Vn)/(R+e_h),-(Ve+e_Ve)*tan(L+e_L)/(R+e_h)])$
+w_en : transpose([Ve/(R0+h),-Vn/(R0+h),-Ve*tan(L)/(R0+h)])$
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
@@ -54,23 +42,11 @@ w_ib : transpose([wx,wy,wz])$
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-est_w_ib : transpose([wx+e_wx,wy+e_wy,wz+e_wz])$
-/* [wxMaxima: input   end   ] */
-
-/* [wxMaxima: input   start ] */
 v_n : transpose([Vn,Ve,Vd])$
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-est_v_n : transpose([Vn+e_Vn,Ve+e_Ve,Vd+e_Vd])$
-/* [wxMaxima: input   end   ] */
-
-/* [wxMaxima: input   start ] */
 g_n : transpose([0,0,g])$
-/* [wxMaxima: input   end   ] */
-
-/* [wxMaxima: input   start ] */
-est_g_n : transpose([0,0,g+e_g])$
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
@@ -148,15 +124,7 @@ q_nb : transpose([a,b,c,d])$
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-est_q_nb : transpose([a+e_a,b+e_b,c+e_c,d+e_d])$
-/* [wxMaxima: input   end   ] */
-
-/* [wxMaxima: input   start ] */
 C_nb_quat : quat2dcm(q_nb)$
-/* [wxMaxima: input   end   ] */
-
-/* [wxMaxima: input   start ] */
-est_C_nb_quat : fullratsimp(C_nb_quat_est : quat2dcm(est_q_nb))$
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: section start ]
@@ -274,10 +242,6 @@ Computed Quantities
 
 /* [wxMaxima: input   start ] */
 w_nb : C_nb_quat.w_ib - (w_ie + w_en)$
-/* [wxMaxima: input   end   ] */
-
-/* [wxMaxima: input   start ] */
-est_w_nb : est_C_nb_quat.est_w_ib - (est_w_ie + est_w_en)$
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */

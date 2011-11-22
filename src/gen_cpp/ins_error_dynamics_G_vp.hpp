@@ -1,9 +1,9 @@
-G_vp(0,0) = -dd-cc+bb+aa;
-G_vp(0,1) = 2*b*c-2*a*d;
-G_vp(0,2) = 2*b*d+2*a*c;
-G_vp(1,0) = 2*a*d+2*b*c;
-G_vp(1,1) = -dd+cc-bb+aa;
-G_vp(1,2) = 2*c*d-2*a*b;
-G_vp(2,0) = 2*b*d-2*a*c;
-G_vp(2,1) = 2*c*d+2*a*b;
+G_vp(0,0) = -(dd+cc-bb-aa);
+G_vp(0,1) = -2*(a*d-b*c);
+G_vp(0,2) = 2*(b*d+a*c);
+G_vp(1,0) = 2*(a*d+b*c);
+G_vp(1,1) = -(dd-cc+bb-aa);
+G_vp(1,2) = 2*(c*d-a*b);
+G_vp(2,0) = 2*(b*d-a*c);
+G_vp(2,1) = 2*(c*d+a*b);
 G_vp(2,2) = dd-cc-bb+aa;

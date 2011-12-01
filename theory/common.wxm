@@ -237,6 +237,30 @@ d_psi: (wy*sin(%phi) + wz*cos(%phi))/cos(%theta)$
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: section start ]
+Body Rates in Terms of Euler Rates
+   [wxMaxima: section end   ] */
+
+/* [wxMaxima: input   start ] */
+depends(phi,t,theta,t,psi,t)$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+v1 : matrix([\diff(\phi,t)],[0],[0])$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+v2 : matrix([0],[\diff(theta,t)],[0])$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+v3: matrix([0],[0],[\diff(psi,t)])$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+eulerRates2PQR: v1 + C1(phi).v2 + C1(phi).C2(theta).v3$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: section start ]
 Computed Quantities
    [wxMaxima: section end   ] */
 

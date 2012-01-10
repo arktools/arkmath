@@ -430,14 +430,6 @@ double integrate (double i1, double i0, double initial, double freq)
     return ans;
 }
 
-// Calculate elapsed time
-double elapsedTime(timeval time0, timeval time)
-{
-    double timeElapsed = (time.tv_sec - time0.tv_sec);
-    timeElapsed += (time.tv_usec - time0.tv_usec) / 1e6;
-    return timeElapsed;
-}
-
 // Quaternion utilities
 vector<double> quatProd(const vector<
                         double> &q1, const vector<double> &q2)

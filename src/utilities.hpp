@@ -214,7 +214,6 @@ std::string doubleToString(double val);
 std::string intToString(int val);
 void cursorxy( int col, int line );
 void clear( bool gohome = true );
-double elapsedTime(timeval time0, timeval time);
 
 // integration
 vector<double> integrate(vector<double> i1,

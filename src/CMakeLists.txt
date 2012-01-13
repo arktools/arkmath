@@ -12,7 +12,7 @@ add_library(${PROJECT_NAME}
 	)
 
 add_dependencies(${PROJECT_NAME} boost-numeric-bindings)
-target_link_libraries(${PROJECT_NAME} ${Boost_LIBRARIES} ${LAPACK_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} ${Boost_LIBRARIES} ${LAPACK_LIBRARIES} gfortran)
 set_target_properties(${PROJECT_NAME} PROPERTIES VERSION ${LIBRARY_VERSION}
 	SOVERSION ${LIBRARY_SOVERSION})
 

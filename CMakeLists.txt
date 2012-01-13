@@ -118,6 +118,7 @@ endif(NOT CMAKE_BUILD_TYPE)
 # enable languages
 enable_language(C)
 enable_language(CXX)
+enable_language(Fortran)
 
 # add make dist target
 add_custom_target(dist COMMAND ${CMAKE_MAKE_PROGRAM} package_source)
@@ -128,8 +129,13 @@ set_property(DIRECTORY PROPERTY EP_BASE ${EP_BASE_DIR})
 set(EP_INSTALL_PREFIX ${CMAKE_INSTALL_PREFIX}/${PROJECT_NAME}-external)
 
 # find libraries with cmake modules
-find_package(LAPACK)
-find_package(Boost 1.40.0 REQUIRED COMPONENTS thread-mt system-mt)
+find_package(LAPACK REQUIRED)
+if(WIN32)
+find_package(Boost 1.40.0 REQUIRED COMPONENTS system-mt thread_win32-mt)
+else()
+find_package(Boost 1.40.0 REQUIRED COMPONENTS system-mt thread-mt)
+endif()
+
 find_or_build_boostnumericbindings(${BOOSTNUMERICBINDINGS_TAG} ${EP_BASE_DIR} ${EP_INSTALL_PREFIX})
 
 # data directory
@@ -159,6 +165,7 @@ install(FILES
 include_directories( ${PROJECT_SOURCE_DIR}/src ${PROJECT_BINARY_DIR}/src)
 
 # subdirectories
+add_definitions(-DBOOST_THREAD_USE_LIB)
 add_subdirectory(src)
 
 if (BUILD_TESTING)

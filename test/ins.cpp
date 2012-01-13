@@ -1,6 +1,6 @@
-#define NDEBUG
 #include "GpsIns.hpp"
 #include <boost/numeric/ublas/io.hpp>
+#include <boost/thread/thread.hpp>
 int main (int argc, char const* argv[])
 {
     boost::numeric::ublas::bounded_vector<double,3> fb;
@@ -63,7 +63,8 @@ int main (int argc, char const* argv[])
 		if (i % 100 == 0) {
         	std::cout << z << std::endl;
 		}
-		usleep(1.0/1000.0*1e6);
+
+        boost::this_thread::sleep(boost::posix_time::milliseconds(10));
     }
     return 0;
 }

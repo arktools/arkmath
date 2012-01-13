@@ -49,7 +49,7 @@ include(DefineInstallationPaths)
 if(WIN32)
 	set(CPACK_GENERATOR "NSIS")
 	set(CPACK_SOURCE_GENERATOR "ZIP")
-    set(CMAKE_INSTALL_PREFIX "")
+    set(CMAKE_INSTALL_PREFIX "/usr/local")
     # There is a bug in NSI that does not handle full unix paths properly. Make
     # sure there is at least one set of four (4) backlasshes.
     #set(CPACK_PACKAGE_ICON "${CMake_SOURCE_DIR}/Utilities/Release\\\\InstallIcon.bmp")

@@ -11,7 +11,7 @@ set(PROJECT_CONTACT_VENDOR arkTools)
 # set for release
 set(APPLICATION_VERSION_MAJOR "0")
 set(APPLICATION_VERSION_MINOR "2")
-set(APPLICATION_VERSION_PATCH "4")
+set(APPLICATION_VERSION_PATCH "5")
 set(BOOSTNUMERICBINDINGS_TAG "1f994e8a2e161cddb6577eacc76b7bc358701cbe")
 
 set(APPLICATION_VERSION "${APPLICATION_VERSION_MAJOR}.${APPLICATION_VERSION_MINOR}.${APPLICATION_VERSION_PATCH}")
@@ -146,7 +146,10 @@ else()
 find_package(Boost 1.40.0 REQUIRED COMPONENTS system-mt thread-mt)
 endif()
 
-find_or_build_boostnumericbindings(${BOOSTNUMERICBINDINGS_TAG} ${EP_BASE_DIR} ${EP_INSTALL_PREFIX})
+find_package (BOOSTNUMERICBINDINGS)
+if (NOT BOOSTNUMERICBINDINGS_FOUND)
+    build_boostnumericbindings(${BOOSTNUMERICBINDINGS_TAG} ${EP_BASE_DIR} ${EP_INSTALL_PREFIX} ${EP_DATADIR})
+endif()
 
 # data directory
 if(DEV_MODE)
@@ -154,11 +157,13 @@ if(DEV_MODE)
 	set(DATADIR ${PROJECT_SOURCE_DIR}/data)
 	set(LIBDIR ${CMAKE_BINARY_DIR}/bin)
 	set(BINDIR ${CMAKE_BINARY_DIR}/bin)
+    set(EP_DATADIR ${EP_BASE_DIR}/${EP_INSTALL_PREFIX}/share)
 else()
 	message(STATUS "configuring for standard build")
 	set(DATADIR ${CMAKE_INSTALL_PREFIX}/share/${PROJECT_NAME}/data)
 	set(LIBDIR ${CMAKE_INSTALL_PREFIX}/lib)
 	set(BINDIR ${CMAKE_INSTALL_PREFIX}/bin)
+    set(EP_DATADIR ${EP_INSTALL_PREFIX}/share)
 endif()
 
 # install data files

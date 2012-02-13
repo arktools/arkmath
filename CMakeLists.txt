@@ -36,6 +36,7 @@ include (CTest)
 include(ExternalProject)
 
 # settings
+option(BUILD_TESTING " Build tests." OFF)
 option(DEV_MODE "Setup paths for developer testing." OFF)
 option(BUILD_SHARED_LIBS "Build shared libraries instead of static." OFF)
 if (NOT BUILD_SHARED_LIBS)
@@ -139,7 +140,7 @@ set_property(DIRECTORY PROPERTY EP_BASE ${EP_BASE_DIR})
 set(EP_INSTALL_PREFIX ${CMAKE_INSTALL_PREFIX}/${PROJECT_NAME}-external)
 
 # find libraries with cmake modules
-find_package(LAPACK REQUIRED)
+find_package(LAPACK)
 if(WIN32)
 find_package(Boost 1.40.0 REQUIRED COMPONENTS system-mt thread_win32-mt)
 else()

@@ -20,9 +20,13 @@
 #include <boost/numeric/ublas/vector_proxy.hpp>
 #include "utilities.hpp"
 
-namespace mavsim
+namespace arkmath
 {
-GpsIns::GpsIns(double lat, double lon, double height, //
+	const double GpsIns::R0 = 6.3781e6; //earth radius in meters
+	const double GpsIns::w = 7.292115e-5; //earth rotation rate in radians
+	const double GpsIns::g0=9.81;
+
+    GpsIns::GpsIns(double lat, double lon, double height, //
 	   	double roll, double pitch, double yaw, //
 		double Vn, double Ve, double Vd, //
 		double sigmaPos, double sigmaAlt, double sigmaVel, //
@@ -405,7 +409,7 @@ void GpsIns::getState(double *output)
 	output[7]=vn(1);
 	output[8]=vn(2);
 }
-} // mavsim
+} // arkmath
 
 
 // vim:ts=4:sw=4

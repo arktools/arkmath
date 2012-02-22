@@ -28,6 +28,6 @@ macro(build_boostnumericbindings TAG EP_BASE_DIR ARGS)
         CONFIGURE_COMMAND ""
         BUILD_COMMAND ""
         INSTALL_DIR ${EP_BASE_DIR}/${CMAKE_INSTALL_PREFIX}
-        INSTALL_COMMAND ${CMAKE_COMMAND} -E  copy boost ${EP_BASE_DIR}/${CMAKE_INSTALL_PREFIX}/include
+        INSTALL_COMMAND ${CMAKE_COMMAND} -E  copy_directory boost ${EP_BASE_DIR}/${CMAKE_INSTALL_PREFIX}/include/boost
     )
 endmacro()

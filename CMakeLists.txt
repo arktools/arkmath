@@ -1,10 +1,13 @@
-project (arkmath)
+project (arkmath C CXX Fortran)
 
 # settings
 cmake_minimum_required (VERSION 2.6)
+set(APPLICATION_NAME "${PROJECT_NAME}")
 set(APPLICATION_VERSION_MAJOR "0")
 set(APPLICATION_VERSION_MINOR "2")
 set(APPLICATION_VERSION_PATCH "5")
+set(APPLICATION_VERSION "${APPLICATION_VERSION_MAJOR}.${APPLICATION_VERSION_MINOR}.${APPLICATION_VERSION_PATCH}")
+set(LIBRARY_VERSION ${APPLICATION_VERSION})
 set(LIBRARY_SOVERSION "0.0.0")
 set(BOOSTNUMERICBINDINGS_TAG "1f994e8a2e161cddb6577eacc76b7bc358701cbe")
 set(PROJECT_CONTACT_EMAIL james.goppert@gmail.com)
@@ -15,77 +18,75 @@ set(CMAKE_MODULE_PATH
 	${CMAKE_SOURCE_DIR}/cmake
 	${CMAKE_SOURCE_DIR}/cmake/arkcmake
 )
+include(ExternalProject)
+include(DefineCMakeDefaults)
+include(DefinePlatformDefaults)
+include(DefineCompilerFlags)
+include(DefineInstallationPaths)
 include(FindBOOSTNUMERICBINDINGS)
+include(CPackPackage)
 
-# use common setup
-include(CommonSetup)
-set(LIBRARY_VERSION ${APPLICATION_VERSION})
-
-# cpack
-if(WIN32)
-	set(CPACK_GENERATOR "NSIS")
-	set(CPACK_SOURCE_GENERATOR "ZIP")
-    set(CMAKE_INSTALL_PREFIX "/usr/local")
-    # There is a bug in NSI that does not handle full unix paths properly. Make
-    # sure there is at least one set of four (4) backlasshes.
-    #set(CPACK_PACKAGE_ICON "${CMake_SOURCE_DIR}/Utilities/Release\\\\InstallIcon.bmp")
-    #set(CPACK_NSIS_INSTALLED_ICON_NAME "bin\\\\arkmath.exe")
-    set(CPACK_NSIS_DISPLAY_NAME "${PROJECT_NAME}-${APPLICATION_VERSION}")
-    set(CPACK_NSIS_HELP_LINK "http:\\\\\\\\github.com/arktools/arkmath")
-    set(CPACK_NSIS_URL_INFO_ABOUT "http:\\\\\\\\github.com/arktools/arkmath")
-    set(CPACK_NSIS_CONTACT ${PROJECT_CONTACT_EMAIL})
-    set(CPACK_NSIS_MODIFY_PATH ON)
-else()
-    #set(CPACK_STRIP_FILES "bin/ins")
-    #set(CPACK_SOURCE_STRIP_FILES "")
-    if(APPLE)
-        set(CPACK_GENERATOR "PackageMaker")
-        set(CPACK_SOURCE_GENERATOR "TGZ")
-            elseif(UNIX)
-        set(CPACK_GENERATOR "DEB")
-        set(CPACK_SOURCE_GENERATOR "ZIP")
-    else()
-        message(FATAL_ERROR "unknown operating system")
-    endif()
-endif()
-set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "arkTools math module")
-set(CPACK_PACKAGE_VENDOR ${PROJECT_VENDOR})
-set(CPACK_PACKAGE_CONTACT ${PROJECT_CONTACT_EMAIL})
-set(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/README")
-set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/COPYING")
-set(CPACK_PACKAGE_VERSION_MAJOR "${APPLICATION_VERSION_MAJOR}") 
-set(CPACK_PACKAGE_VERSION_MINOR "${APPLICATION_VERSION_MINOR}")
-set(CPACK_PACKAGE_VERSION_PATCH "${APPLICATION_VERSION_PATCH}")
-set(CPACK_PACKAGE_INSTALL_DIRECTORY "${PROJECT_NAME}-${APPLICATION_VERSION}")
-set(CPACK_SET_DESTDIR TRUE)
-set(CPACK_SOURCE_IGNORE_FILES ${CPACK_SOURCE_IGNORE_FILES}
-	/.git/;/build/;~$;.*\\\\.bin$;.*\\\\.swp$)
-set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_SOURCE_DIR}/COPYING")
-set(CPACK_RESOURCE_FILE_README "${CMAKE_SOURCE_DIR}/README")
-set(CPACK_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
-#set(CPACK_PACKAGE_EXECUTABLES "MyExecutable" "My Executable")
-include(CPack)
+# settings
+option(WITH_BUILD_STATIC "Prefer static linking." ON)
+option(WITH_BUILD_TESTING "Build test programs." ON)
+option(WITH_BUILD_DEPS_FOUND "Build all external dependencies, even if found." OFF)
+option(WITH_BUILD_DEPS "Build external dependencies." ON)
 
 # enable languages
 enable_language(C)
 enable_language(CXX)
 enable_language(Fortran)
 
+# internal variables
+set(BUILDING_DEPS OFF CACHE INTERNAL "Whether are not we are building the dependencies.")
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib)
+if(NOT EP_BASE_DIR)
+    set(EP_BASE_DIR "${CMAKE_BINARY_DIR}/CMakeExternals")
+endif()
+set(CMAKE_FIND_ROOT_PATH "${EP_BASE_DIR}")
+
+# static lib options
+if (WITH_BUILD_STATIC)
+    set(BOOST_USE_STATIC_LIBS ON)
+    # prefer static libs
+    if(WIN32)
+        set(CMAKE_FIND_LIBRARY_SUFFIXES .lib .a ${CMAKE_FIND_LIBRARY_SUFFIXES})
+    else()
+        set(CMAKE_FIND_LIBRARY_SUFFIXES .a ${CMAKE_FIND_LIBRARY_SUFFIXES})
+    endif()
+endif()
+
+# add make dist target
+add_custom_target(dist COMMAND ${CMAKE_MAKE_PROGRAM} package_source)
+
+# build external dependencies automatically if make found
+if ( NOT ("${CMAKE_MAKE_PROGRAM}" STREQUAL "") AND (NOT BUILDING_DEPS) AND (WITH_BUILD_DEPS) )
+    execute_process(COMMAND ${CMAKE_COMMAND} ".." "-DBUILDING_DEPS=y")
+    execute_process(COMMAND ${CMAKE_MAKE_PROGRAM} "-f${CMAKE_BINARY_DIR}/Makefile")
+endif()
+
 # find libraries with cmake modules
 find_package(LAPACK)
 if(WIN32)
-find_package(Boost 1.40.0 REQUIRED COMPONENTS system-mt thread_win32-mt)
+    find_package(Boost 1.40.0 REQUIRED COMPONENTS system-mt thread_win32-mt)
 else()
-find_package(Boost 1.40.0 REQUIRED COMPONENTS system-mt thread-mt)
+    find_package(Boost 1.40.0 REQUIRED COMPONENTS system-mt thread-mt)
 endif()
-
 find_package (BOOSTNUMERICBINDINGS)
-if (NOT BOOSTNUMERICBINDINGS_FOUND)
-    build_boostnumericbindings(${BOOSTNUMERICBINDINGS_TAG} ${EP_BASE_DIR} ${EP_INSTALL_PREFIX} ${EP_DATADIR})
-endif()
 
-# install data files
-install(DIRECTORY "${PROJECT_SOURCE_DIR}/data" DESTINATION share/${PROJECT_NAME} PATTERN "*.git*" EXCLUDE)
+# build external libraries if required
+if (BUILDING_DEPS)
+    set_property(DIRECTORY PROPERTY EP_BASE ${EP_BASE_DIR})
+    if (WITH_BUILD_DEPS_FOUND OR (NOT MAVLINK_FOUND))
+        set(ARGS_BOOSTNUMERICBINDINGS
+        )
+        build_boostnumericbindings(${BOOSTNUMERICBINDINGS_TAG} ${EP_BASE_DIR} "${ARGS_BOOSTNUMERICBINDINGS}")
+    endif()
+    # the return here terminates the cmake once all dependencies are built
+    return()
+endif()
 
 # pkgconfig
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/pc.cmake ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.pc)
@@ -96,11 +97,18 @@ install(FILES
 
 # project wide flags
 include_directories( ${PROJECT_SOURCE_DIR}/src ${PROJECT_BINARY_DIR}/src)
+add_definitions(-DBOOST_THREAD_USE_LIB)
+
+# install data files
+install(DIRECTORY "${PROJECT_SOURCE_DIR}/data" DESTINATION share/${PROJECT_NAME} PATTERN "*.git*" EXCLUDE)
+
+# install external projects, if built
+if (EXISTS ${EP_BASE_DIR}/${EP_INSTALL_PREFIX}/)
+    install(DIRECTORY ${EP_BASE_DIR}/${EP_INSTALL_PREFIX}/ DESTINATION ${CMAKE_INSTALL_PREFIX})
+endif()
 
 # subdirectories
-add_definitions(-DBOOST_THREAD_USE_LIB)
 add_subdirectory(src)
-
-if (BUILD_TESTING)
+if (WITH_BUILD_TESTING)
 	add_subdirectory(test)
 endif ()

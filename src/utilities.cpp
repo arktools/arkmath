@@ -36,7 +36,7 @@ extern "C"
 
 }
 
-namespace mavsim
+namespace arkmath
 {
 matrix<double> cross(const vector<double> &vec)
 {
@@ -621,5 +621,5 @@ matrix<double> prod3(const matrix<double> &a, const matrix<double> &b, const mat
 //}
 //printMat(permutation,"Permutation",0);
 
-} //namespace mavsim
+} //namespace arkmath
 // vim:ts=4:sw=4

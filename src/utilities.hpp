@@ -49,7 +49,7 @@
 #include <complex>
 
 
-namespace mavsim
+namespace arkmath
 {
 
 using namespace boost::numeric::ublas;

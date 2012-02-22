@@ -19,7 +19,7 @@
 #include "GeoMag.hpp"
 #include <stdexcept>
 
-namespace mavsim
+namespace arkmath
 {
 
 GeoMag::GeoMag(std::string file, int maxDeg)

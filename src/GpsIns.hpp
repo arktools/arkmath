@@ -15,14 +15,14 @@
  * You should have received a copy of the GNU General Public License along
  * with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef mavsim_GpsIns_HPP
-#define mavsim_GpsIns_HPP
+#ifndef arkmath_GpsIns_HPP
+#define arkmath_GpsIns_HPP
 
 #include <boost/numeric/ublas/matrix.hpp>
 #include <boost/numeric/ublas/vector.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 
-namespace mavsim
+namespace arkmath
 {
 namespace ublas = boost::numeric::ublas;
 
@@ -35,7 +35,7 @@ public:
 			double sigmaPos, double sigmaAlt, double sigmaVel, //
 			double sigmaAccelG, double sigmaGyro, bool useGravity=true);
 
-void updateAll(double fbx, double fby, double fbz, double wbx, double wby, double wbz, double lat, double lon, double alt, double Vn, double Ve, double Vd);
+    void updateAll(double fbx, double fby, double fbz, double wbx, double wby, double wbz, double lat, double lon, double alt, double Vn, double Ve, double Vd);
 	void updateAll(const ublas::vector<double> &fb, const ublas::vector<double> &wb);
 	void updateFast(const ublas::vector<double> &fb, const ublas::vector<double> &wb);
 	void updateMed();
@@ -49,14 +49,14 @@ void updateAll(double fbx, double fby, double fbz, double wbx, double wby, doubl
 	double gFreq;
 	int integrateIndex;
 
-	static const double R0 = 6.3781e6; //earth radius in meters
-	static const double w= 7.292115e-5; //earth rotation rate in radians
+	static const double R0; //earth radius in meters
+	static const double w; //earth rotation rate in radians
 
 	double dt_j, dt_k, dt_l, dt_g;
 	double kQuat;
 	double sigmaNorm, zetaNorm;
 	double as, ac, bs, bc;
-	static const double g0=9.81;
+	static const double g0;
 	ublas::bounded_vector<double,3>g;
 	
 	ublas::bounded_vector<double,3>v;
@@ -123,7 +123,7 @@ void updateAll(double fbx, double fby, double fbz, double wbx, double wby, doubl
 
 };
 
-} // mavsim
+} // arkmath
 
 #endif
 // vim:ts=4:sw=4

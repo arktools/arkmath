@@ -88,7 +88,7 @@ if(WIN32)
 else()
     find_package(Boost 1.40.0 REQUIRED COMPONENTS system-mt thread-mt)
 endif()
-find_package (BOOSTNUMERICBINDINGS)
+find_package(BOOSTNUMERICBINDINGS)
 
 # build dependencies
 if (WITH_BUILD_DEPS AND (NOT ROOT_THREAD) )
@@ -129,8 +129,23 @@ add_definitions(-DBOOST_THREAD_USE_LIB)
 
 # install data files
 install(DIRECTORY "${PROJECT_SOURCE_DIR}/data" DESTINATION share/${PROJECT_NAME} COMPONENT Dev PATTERN "*.git*" EXCLUDE)
-file(GLOB  generalSources "src/*.c*")
-file(GLOB  generalHeaders "src/*.h*")
+
+set(generalSources
+    src/GeoMag.cpp
+    src/utilities.cpp
+    )
+
+set(generalHeaders
+    src/GeoMag.hpp
+    src/GpsIns.hpp
+    src/storage_adaptors.hpp
+    src/utilities.hpp
+    )
+
+if (WITH_LAPACK)
+    list(APPEND generalSources src/GpsIns.cpp)
+    list(APPEND generalHeaders src/GpsIns.hpp)
+endif()
 file(GLOB  gen_cppHeaders "src/gen_cpp/*.h*")
 file(GLOB  gen_fortranHeaders "src/gen_cpp/*.f*")
 file(GLOB  gen_sciHeaders "src/gen_sci/*.sci")

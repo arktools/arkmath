@@ -1,4 +1,5 @@
 # only keep relevant arkcmake files
 arkcmake/*
 !arkcmake/FindBOOSTNUMERICBINDINGS.cmake
+!arkcmake/MacroCommonPaths.cmake
 !arkcmake/updateArkcmake.py

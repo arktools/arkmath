@@ -2,4 +2,5 @@
 arkcmake/*
 !arkcmake/FindBOOSTNUMERICBINDINGS.cmake
 !arkcmake/MacroCommonPaths.cmake
+!arkcmake/LibFindMacros.cmake
 !arkcmake/updateArkcmake.py

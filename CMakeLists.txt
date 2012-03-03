@@ -149,13 +149,49 @@ endif()
 file(GLOB  gen_cppHeaders "src/gen_cpp/*.h*")
 file(GLOB  gen_fortranHeaders "src/gen_cpp/*.f*")
 file(GLOB  gen_sciHeaders "src/gen_sci/*.sci")
-add_library(${PROJECT_NAME} ${generalSources})
-add_dependencies(${PROJECT_NAME} boost-numeric-bindings)
-target_link_libraries(${PROJECT_NAME} ${Boost_LIBRARIES} ${LAPACK_LIBRARIES} m gfortran)
-set_target_properties(${PROJECT_NAME} PROPERTIES
-    VERSION ${LIBRARY_VERSION}
-	SOVERSION ${LIBRARY_SOVERSION}
+
+# link libraries
+set(ARKMATH_LINK_LIBS
+    ${Boost_LIBRARIES} 
+    ${LAPACK_LIBRARIES}
+    m
     )
+if (WITH_LAPACK)
+    list(APPEND ARKMATH_LINK_LIBS gfortran)
+endif()
+
+# static library
+add_library(arkmathStatic STATIC ${generalSources})
+add_dependencies(arkmathStatic boost-numeric-bindings)
+set(STATIC_LIBNAME_SUFFIX "")
+if (MSVC)
+    set(STATIC_LIBNAME_SUFFIX "static")
+endif()
+set_target_properties(arkmathStatic PROPERTIES
+    OUTPUT_NAME arkmath${STATIC_LIBNAME_SUFFIX}
+    VERSION ${LIBRARY_VERSION}
+    PUBLIC_HEADER ""
+    PRIVATE_HEADER ""
+    )
+target_link_libraries(arkmathStatic ${ARKMATH_LINK_LIBS})
+list(APPEND INSTALLED_TARGETS arkmathStatic)
+
+# shared library
+if (WITH_BUILD_SHARED)
+    add_library(arkmathShared STATIC ${generalSources})
+    add_dependencies(arkmathShared boost-numeric-bindings)
+    set_target_properties(arkmathShared PROPERTIES
+        OUTPUT_NAME arkmath
+        VERSION ${LIBRARY_VERSION}
+        SOVERSION ${LIBRARY_SOVERSION}
+        PUBLIC_HEADER ""
+        PRIVATE_HEADER ""
+        )
+    target_link_libraries(arkmathShared ${ARKMATH_LINK_LIBS})
+    list(APPEND INSTALLED_TARGETS arkmathShared)
+endif()
+
+# generated files/ headers install
 install(FILES ${generalHeaders} DESTINATION include/${PROJECT_NAME} COMPONENT Dev)
 install(FILES ${gen_cppHeaders} DESTINATION include/${PROJECT_NAME}/gen_cpp COMPONENT Dev)
 install(FILES ${gen_fortranHeaders} DESTINATION include/${PROJECT_NAME}/gen_fortran COMPONENT Dev)
@@ -164,8 +200,21 @@ install(FILES ${gen_sciHeaders} DESTINATION include/${PROJECT_NAME}/gen_sciHeade
 # testing
 if (WITH_BUILD_TESTING AND LAPACK_FOUND)
     add_executable(ins ins.cpp)
-    target_link_libraries(ins arkmath)
+    target_link_libraries(ins arkmathStatic)
 endif ()
+
+# install
+install(TARGETS  ${INSTALLED_TARGETS}
+    RUNTIME DESTINATION "bin" COMPONENT Runtime
+    LIBRARY DESTINATION "lib" COMPONENT Runtime
+    ARCHIVE DESTINATION "lib" COMPONENT Dev
+    BUNDLE DESTINATION "/Applications" COMPONENT Runtime
+    FRAMEWORK DESTINATION "/Library/Frameworks" COMPONENT Runtime
+    # where to put files on non-mac computers, mac overrides and uses default
+    PRIVATE_HEADER DESTINATION "include/jsbsim" COMPONENT Runtime
+    PUBLIC_HEADER DESTINATION "include/jsbsim" COMPONENT Runtime
+    RESOURCE DESTINATION "share/jsbsim" COMPONENT Runtime
+    )
 
 # install external projects, if built
 if (EXISTS ${EP_BASE_DIR}/${CMAKE_INSTALL_PREFIX}/)

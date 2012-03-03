@@ -1,54 +1,74 @@
 project (arkmath C CXX Fortran)
 
 # settings
-cmake_minimum_required (VERSION 2.6)
-set(APPLICATION_NAME "${PROJECT_NAME}")
-set(APPLICATION_VERSION_MAJOR "0")
-set(APPLICATION_VERSION_MINOR "2")
-set(APPLICATION_VERSION_PATCH "5")
-set(APPLICATION_VERSION "${APPLICATION_VERSION_MAJOR}.${APPLICATION_VERSION_MINOR}.${APPLICATION_VERSION_PATCH}")
-set(LIBRARY_VERSION ${APPLICATION_VERSION})
-set(LIBRARY_SOVERSION "0.0.0")
-set(BOOSTNUMERICBINDINGS_TAG "1f994e8a2e161cddb6577eacc76b7bc358701cbe")
+cmake_minimum_required (VERSION 2.8)
+set(PROJECT_VERSION_MAJOR "0")
+set(PROJECT_VERSION_MINOR "2")
+set(PROJECT_VERSION_PATCH "5")
+set(PROJECT_VERSION "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}")
 set(PROJECT_CONTACT_EMAIL james.goppert@gmail.com)
 set(PROJECT_CONTACT_VENDOR arkTools)
+set(LIBRARY_VERSION ${PROJECT_VERSION})
+set(LIBRARY_SOVERSION "0.0.0")
+
+# third party
+set(BOOSTNUMERICBINDINGS_TAG "1f994e8a2e161cddb6577eacc76b7bc358701cbe")
+
+# options
+option(WITH_BUILD_DEPS "Build external dependencies." ON)
+option(WITH_BUILD_SHARED "Build shared library." OFF)
+option(WITH_PREFER_STATIC "Prefer static linking." ON)
+option(WITH_BUILD_TESTING "Build test programs." OFF)
+option(WITH_LAPACK "Build with lapack library support." OFF)
+
+# variables
+set(ROOT_THREAD TRUE CACHE INTERNAL "Is this the top level of the recursion?")
+set(INSTALLED_TARGETS "")
 
 # modules
-set(CMAKE_MODULE_PATH
-	${CMAKE_SOURCE_DIR}/cmake
-	${CMAKE_SOURCE_DIR}/cmake/arkcmake
-)
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake ${CMAKE_SOURCE_DIR}/cmake/arkcmake)
+include(BundleUtilities)
+include(CheckIncludeFiles)
+include(CheckFunctionExists)
+include(CheckSymbolExists)
+include(CheckLibraryExists)
+#include(CheckTypeSize)
+#include(CheckPrototypeExists)
+#include(CheckCXXSourceCompiles)
+#include(CheckCSourceCompiles)
 include(ExternalProject)
-include(DefineCMakeDefaults)
-include(DefinePlatformDefaults)
-include(DefineCompilerFlags)
-include(DefineInstallationPaths)
 include(FindBOOSTNUMERICBINDINGS)
-include(CPackPackage)
 
-# settings
-option(WITH_BUILD_STATIC "Prefer static linking." ON)
-option(WITH_BUILD_TESTING "Build test programs." ON)
-option(WITH_BUILD_DEPS_FOUND "Build all external dependencies, even if found." OFF)
-option(WITH_BUILD_DEPS "Build external dependencies." ON)
+# spawn new cmake to build deps
+if (WITH_BUILD_DEPS AND ROOT_THREAD)
+    execute_process(COMMAND ${CMAKE_COMMAND} "${CMAKE_SOURCE_DIR}"
+        "-DCMAKE_TOOLCHAIN_FILE=${CMAKE_TOOLCHAIN_FILE}"
+        "-DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}"
+        "-DEP_BASE_DIR=${EP_BASE_DIR}"
+        "-DWITH_BUILD_DEPS=${WITH_BUILD_DEPS}"
+        "-DWITH_BUILD_SHARED=${WITH_BUILD_SHARED}"
+        "-DWITH_PREFER_STATIC=${WITH_PREFER_STATIC}"
+        "-DWITH_TESTING=${WITH_TESTING}"
+        "-DWITH_LAPACK=${WITH_LAPACK}"
+        "-DROOT_THREAD=FALSE"
+        RESULT_VARIABLE ERROR)
+    if (ERROR)
+        message(FATAL_ERROR "error, recursing loop returned error code: ${ERROR}")
+    endif()
+    message("** Making dependencies")
+    execute_process(COMMAND ${CMAKE_MAKE_PROGRAM} "-j4" "-f${CMAKE_BINARY_DIR}/Makefile")
+    message("** Configuring ${PROJECT_NAME}")
+endif()
 
-# enable languages
-enable_language(C)
-enable_language(CXX)
-enable_language(Fortran)
-
-# internal variables
-set(BUILDING_DEPS OFF CACHE INTERNAL "Whether are not we are building the dependencies.")
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib)
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib)
+# external projects find path
 if(NOT EP_BASE_DIR)
     set(EP_BASE_DIR "${CMAKE_BINARY_DIR}/CMakeExternals")
 endif()
-set(CMAKE_FIND_ROOT_PATH "${EP_BASE_DIR}")
+list(APPEND CMAKE_FIND_ROOT_PATH ${EP_BASE_DIR})
 
-# static lib options
-if (WITH_BUILD_STATIC)
+# prefer static packages if building static library
+message("** Finding libraries")
+if (WITH_PREFER_STATIC)
     set(BOOST_USE_STATIC_LIBS ON)
     # prefer static libs
     if(WIN32)
@@ -58,17 +78,11 @@ if (WITH_BUILD_STATIC)
     endif()
 endif()
 
-# add make dist target
-add_custom_target(dist COMMAND ${CMAKE_MAKE_PROGRAM} package_source)
-
-# build external dependencies automatically if make found
-if ( NOT ("${CMAKE_MAKE_PROGRAM}" STREQUAL "") AND (NOT BUILDING_DEPS) AND (WITH_BUILD_DEPS) )
-    execute_process(COMMAND ${CMAKE_COMMAND} ".." "-DBUILDING_DEPS=y")
-    execute_process(COMMAND ${CMAKE_MAKE_PROGRAM} "-f${CMAKE_BINARY_DIR}/Makefile")
-endif()
-
 # find libraries with cmake modules
-find_package(LAPACK)
+if(WITH_LAPACK)
+    enable_language(Fortran)
+    find_package(LAPACK)
+endif()
 if(WIN32)
     find_package(Boost 1.40.0 REQUIRED COMPONENTS system-mt thread_win32-mt)
 else()
@@ -76,39 +90,113 @@ else()
 endif()
 find_package (BOOSTNUMERICBINDINGS)
 
-# build external libraries if required
-if (BUILDING_DEPS)
-    set_property(DIRECTORY PROPERTY EP_BASE ${EP_BASE_DIR})
-    if (WITH_BUILD_DEPS_FOUND OR (NOT MAVLINK_FOUND))
-        set(ARGS_BOOSTNUMERICBINDINGS
+# build dependencies
+if (WITH_BUILD_DEPS AND (NOT ROOT_THREAD) )
+    message("** Configuring dependencies")
+
+    # add external projects
+
+    set(CMAKE_DEFAULT_ARGS
+        -DEP_BASE_DIR=${EP_BASE_DIR}
+        -DCMAKE_TOOLCHAIN_FILE=${CMAKE_TOOLCHAIN_FILE}
+        -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}
         )
-        build_boostnumericbindings(${BOOSTNUMERICBINDINGS_TAG} ${EP_BASE_DIR} "${ARGS_BOOSTNUMERICBINDINGS}")
-    endif()
-    # the return here terminates the cmake once all dependencies are built
+
+    build_boostnumericbindings(${BOOSTNUMERICBINDINGS_TAG} ${EP_BASE_DIR} "${CMAKE_DEFAULT_ARGS}")
+
+    # terminate non root cmake thread
     return()
 endif()
 
-# pkgconfig
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/pc.cmake ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.pc)
-install(FILES
-	${PROJECT_BINARY_DIR}/${PROJECT_NAME}.pc
-	DESTINATION lib/pkgconfig
-	)
+# configure
+#check_include_files(string.h HAVE_STRING_H)
+#check_function_exists(memcopy HAVE_MEMCOPY)
+#check_symbol_exists(LC_MESSAGES "locale.h" HAVE_LC_MESSAGES) 
+#check_library_exists(arkosg  attachNode "" HAVE_ARKOSG)
 
-# project wide flags
-include_directories( ${PROJECT_SOURCE_DIR}/src ${PROJECT_BINARY_DIR}/src)
+# config files
+set(INSTALL_DATA_DIR "${CMAKE_INSTALL_PREFIX}/share/${PROJECT_NAME}")
+configure_file(config.h.in config.h)
+
+# build settings
+include_directories(
+    ${CMAKE_SOURCE_DIR}/src
+    ${PROJECT_BINARY_DIR}/src
+    ${BOOSTNUMERICBINDINGS_INCLUDE_DIRS}
+    ${Boost_INCLUDE_DIRS}
+    )
 add_definitions(-DBOOST_THREAD_USE_LIB)
 
 # install data files
-install(DIRECTORY "${PROJECT_SOURCE_DIR}/data" DESTINATION share/${PROJECT_NAME} PATTERN "*.git*" EXCLUDE)
+install(DIRECTORY "${PROJECT_SOURCE_DIR}/data" DESTINATION share/${PROJECT_NAME} COMPONENT Dev PATTERN "*.git*" EXCLUDE)
+file(GLOB  generalSources "src/*.c*")
+file(GLOB  generalHeaders "src/*.h*")
+file(GLOB  gen_cppHeaders "src/gen_cpp/*.h*")
+file(GLOB  gen_fortranHeaders "src/gen_cpp/*.f*")
+file(GLOB  gen_sciHeaders "src/gen_sci/*.sci")
+add_library(${PROJECT_NAME} ${generalSources})
+add_dependencies(${PROJECT_NAME} boost-numeric-bindings)
+target_link_libraries(${PROJECT_NAME} ${Boost_LIBRARIES} ${LAPACK_LIBRARIES} m gfortran)
+set_target_properties(${PROJECT_NAME} PROPERTIES
+    VERSION ${LIBRARY_VERSION}
+	SOVERSION ${LIBRARY_SOVERSION}
+    )
+install(FILES ${generalHeaders} DESTINATION include/${PROJECT_NAME} COMPONENT Dev)
+install(FILES ${gen_cppHeaders} DESTINATION include/${PROJECT_NAME}/gen_cpp COMPONENT Dev)
+install(FILES ${gen_fortranHeaders} DESTINATION include/${PROJECT_NAME}/gen_fortran COMPONENT Dev)
+install(FILES ${gen_sciHeaders} DESTINATION include/${PROJECT_NAME}/gen_sciHeaders COMPONENT Dev)
+
+# testing
+if (WITH_BUILD_TESTING AND LAPACK_FOUND)
+    add_executable(ins ins.cpp)
+    target_link_libraries(ins arkmath)
+endif ()
 
 # install external projects, if built
 if (EXISTS ${EP_BASE_DIR}/${CMAKE_INSTALL_PREFIX}/)
-    install(DIRECTORY ${EP_BASE_DIR}/${CMAKE_INSTALL_PREFIX}/ DESTINATION ${CMAKE_INSTALL_PREFIX})
+    install(DIRECTORY ${EP_BASE_DIR}/${CMAKE_INSTALL_PREFIX}/ DESTINATION ${CMAKE_INSTALL_PREFIX} COMPONENT Runtime)
 endif()
 
-# subdirectories
-add_subdirectory(src)
-if (WITH_BUILD_TESTING)
-	add_subdirectory(test)
-endif ()
+### packaging
+# set icns file containing icons
+if (APPLE)
+    # set how it shows up in Info.plist
+    set(MACOSX_BUNDLE_ICON_FILE arkmath.icns)
+    # set where in the bundle to put the icns file
+    set_source_files_properties(cmake/arkmath.icns PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
+    # include the icns file in the target
+    #list(APPEND ARKMATH_TEST_SRCS cmake/arkmath.icns)
+endif(APPLE)
+
+# set NSIS image
+if (WIN32)
+    # nsis bug requuires atleast one file with 4 slashes to install correctly
+    set(CPACK_PACKAGE_ICON "${CMAKE_SOURCE_DIR}\\\\/cmake/arkmath-nsis.bmp")
+endif(WIN32)
+
+# add file extensions and set resource files
+configure_file("COPYING" "COPYING.txt" COPYONLY)
+configure_file("README" "README.txt" COPYONLY)
+set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_BINARY_DIR}/COPYING.txt")
+set(CPACK_RESOURCE_FILE_README "${CMAKE_BINARY_DIR}/README.txt")
+set(CPACK_PACKAGE_DESCRIPTION_FILE "${CPACK_RESOURCE_FILE_README}")
+set(CPACK_RESOURCE_FILE_WELCOME "${CMAKE_SOURCE_DIR}/cmake/WELCOME.txt")
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "arktools math library")
+set(CPACK_PACKAGE_VENDOR ${PROJECT_CONTACT_VENDOR})
+set(CPACK_PACKAGE_CONTACT "${PROJECT_CONTACT_EMAIL}")
+set(CPACK_PACKAGE_VERSION ${PROJECT_VERSION})
+set(CPACK_SET_DESTDIR TRUE)
+set(CPACK_COMPONENTS_GROUPING "ALL_COMPONENTS_IN_ONE")
+set(CPACK_PACKAGE_EXECUTABLES
+    #"cmd" "Command Line"
+    #"gui" "Gui"
+    )
+include(CPack)
+
+# pkgconfig
+configure_file(pc.in ${PROJECT_NAME}.pc)
+install(FILES
+    ${PROJECT_BINARY_DIR}/${PROJECT_NAME}.pc
+    DESTINATION "lib/pkgconfig" COMPONENT Dev
+    )
+# vim:sw=4:ts=4:expandtab

@@ -111,7 +111,6 @@ if (WITH_BUILD_DEPS AND (NOT ROOT_THREAD) )
         INSTALL_DIR ${EP_BASE_DIR}/${CMAKE_INSTALL_PREFIX}
         INSTALL_COMMAND ${CMAKE_COMMAND} -E  copy_directory boost ${EP_BASE_DIR}/${CMAKE_INSTALL_PREFIX}/include/boost
     )
-endmacro()
 
     # terminate non root cmake thread
     return()

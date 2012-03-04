@@ -21,6 +21,7 @@ set(BOOSTNUMERICBINDINGS_PROCESS_INCLUDES BOOSTNUMERICBINDINGS_INCLUDE_DIR)
 libfind_process(BOOSTNUMERICBINDINGS)
 
 macro(build_boostnumericbindings TAG EP_BASE_DIR ARGS)
+    list(APPEND CMAKE_ARGS "-DEP_BASE_DIR=${EP_BASE_DIR}")
     ExternalProject_Add(boost-numeric-bindings
         GIT_REPOSITORY "http://git.tiker.net/trees/boost-numeric-bindings.git"
         GIT_TAG ${BOOSTNUMERICBINDINGS_TAG}

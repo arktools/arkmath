@@ -102,15 +102,17 @@ if (WITH_BUILD_DEPS AND (NOT ROOT_THREAD) )
         -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}
         )
 
-    ExternalProject_Add(boost-numeric-bindings
-        GIT_REPOSITORY "http://git.tiker.net/trees/boost-numeric-bindings.git"
-        GIT_TAG ${BOOSTNUMERICBINDINGS_TAG}
-        BUILD_IN_SOURCE 1
-        CONFIGURE_COMMAND ""
-        BUILD_COMMAND ""
-        INSTALL_DIR ${EP_BASE_DIR}/${CMAKE_INSTALL_PREFIX}
-        INSTALL_COMMAND ${CMAKE_COMMAND} -E  copy_directory boost ${EP_BASE_DIR}/${CMAKE_INSTALL_PREFIX}/include/boost
-    )
+    if (WITH_LAPACK)
+        ExternalProject_Add(boost-numeric-bindings
+            GIT_REPOSITORY "http://git.tiker.net/trees/boost-numeric-bindings.git"
+            GIT_TAG ${BOOSTNUMERICBINDINGS_TAG}
+            BUILD_IN_SOURCE 1
+            CONFIGURE_COMMAND ""
+            BUILD_COMMAND ""
+            INSTALL_DIR ${EP_BASE_DIR}/${CMAKE_INSTALL_PREFIX}
+            INSTALL_COMMAND ${CMAKE_COMMAND} -E  copy_directory boost ${EP_BASE_DIR}/${CMAKE_INSTALL_PREFIX}/include/boost
+        )
+    endif()
 
     # terminate non root cmake thread
     return()

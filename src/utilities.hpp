@@ -27,6 +27,7 @@
 #include <boost/numeric/ublas/matrix_proxy.hpp>
 
 // boost bindings
+#ifdef WITH_LAPACK
 #include <boost/numeric/bindings/traits/ublas_matrix.hpp>
 #include <boost/numeric/bindings/traits/ublas_vector.hpp>
 #include <boost/numeric/bindings/lapack/gesvd.hpp>
@@ -36,6 +37,7 @@
 #include <boost/numeric/bindings/lapack/syev.hpp>
 #include <boost/numeric/bindings/lapack/posv.hpp>
 #include <boost/numeric/bindings/lapack/workspace.hpp>
+#endif
 
 // std
 #include <string>
@@ -144,6 +146,7 @@ matrix<double> vectorToMatrix(const vector<double> &A);
 matrix<double> prod3(const matrix<double> &a, const matrix<double> &b, const matrix<double> &c);
 
 
+#ifdef WITH_LAPACK
 template <class MAT>
 int choleskyDecomp(MAT& A)
 {
@@ -154,6 +157,7 @@ using namespace boost::numeric::bindings;
 	for (int i = 0; i<A.size1();i++) for(int j=i+1;j<A.size2();j++) A(i,j) = 0;
 	return info;
 }
+#endif
 
 template<class MAT>
 void printMat(MAT& mat, std::string label="", int precision=2)
@@ -175,6 +179,8 @@ void printMat(MAT& mat, std::string label="", int precision=2)
 		std::cout<<std::endl<<std::endl;
 	}
 }
+
+#ifdef WITH_LAPACK
 template <class MAT, class VEC>
 void eig(const MAT& A, VEC& Sig)
 {
@@ -186,6 +192,7 @@ void eig(const MAT& A, VEC& Sig)
     matrix<double, column_major> U(m,m), SigI(n,m), VT(n,n);
     lapack::gesvd('A','A', Ac, Sig, U, VT);
 }
+#endif
 
 template <class MAT>
 void swapColumns(MAT& mat, int i, int j)

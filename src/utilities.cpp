@@ -23,8 +23,12 @@
 
 #include <boost/numeric/ublas/triangular.hpp>
 using namespace boost::numeric::ublas;
-using namespace boost::numeric::bindings;
 
+#ifdef WITH_LAPACK
+using namespace boost::numeric::bindings;
+#endif
+
+#ifdef WITH_LAPACK
 extern "C"
 {
 
@@ -35,6 +39,7 @@ extern "C"
                         int* IWORk,int* LIWORK,int* INFO);
 
 }
+#endif
 
 namespace arkmath
 {
@@ -258,6 +263,7 @@ matrix<double> inv(const matrix<double>& input)
     return inverse;
 }
 
+#ifdef WITH_LAPACK
 matrix<double> pinv(const matrix<double>& A)
 {
     matrix<double, column_major> Ac = A;
@@ -297,6 +303,7 @@ matrix<double> pinv(const matrix<double>& A)
     matrix<double> temp = prod(trans(VT),SigI);
     return prod(temp,trans(U));
 }
+#endif
 
 bool select(double real, double imag)
 {
@@ -306,6 +313,7 @@ bool select(double real, double imag)
     else return 0;
 }
 
+#ifdef WITH_LAPACK
 matrix<double> dare(const matrix<double> &A, const matrix<double> &B, const matrix<double> &R, const matrix<double> &Q)
 {
     //A,Q,X:n*n, B:n*m, R:m*m
@@ -364,6 +372,8 @@ matrix<double> dare(const matrix<double> &A, const matrix<double> &B, const matr
     return prod(U21,inv(U11));
 
 }
+#endif
+
 matrix<double> dlqr(const matrix<double> &A, const matrix<double> &B, const matrix<double> &R, const matrix<double> &Q)
 {
     //A,Q,X:n*n, B:n*m, R:m*m
@@ -574,6 +584,8 @@ vector<double> norm(const vector<double> &vec)
         return vec*(1/norm_2(vec));
     }
 }
+
+#ifdef WITH_LAPACK
 /**
  * Matrix square root function.
  */
@@ -589,6 +601,7 @@ matrix<double> matSqrt(const matrix<double>& A)
     matrix<double> result = prod(tmp,trans(a));
     return result;
 }
+#endif
 
 
 /**

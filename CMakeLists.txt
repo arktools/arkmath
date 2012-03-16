@@ -11,9 +11,6 @@ set(PROJECT_CONTACT_VENDOR arkTools)
 set(LIBRARY_VERSION ${PROJECT_VERSION})
 set(LIBRARY_SOVERSION "0.0.0")
 
-# third party
-set(BOOSTNUMERICBINDINGS_TAG "1f994e8a2e161cddb6577eacc76b7bc358701cbe")
-
 # options
 option(WITH_BUILD_DEPS "Build external dependencies." ON)
 option(WITH_BUILD_SHARED "Build shared library." OFF)
@@ -37,7 +34,6 @@ include(CheckLibraryExists)
 #include(CheckCXXSourceCompiles)
 #include(CheckCSourceCompiles)
 include(ExternalProject)
-include(FindBOOSTNUMERICBINDINGS)
 
 # spawn new cmake to build deps
 if (WITH_BUILD_DEPS AND ROOT_THREAD)
@@ -79,16 +75,20 @@ if (WITH_PREFER_STATIC)
 endif()
 
 # find libraries with cmake modules
+set(REQUIRED_IF_ROOT_THREAD)
+if (ROOT_THREAD)
+    set(REQUIRED_IF_ROOT_THREAD "REQUIRED")
+endif()
 if(WITH_LAPACK)
     enable_language(Fortran)
     find_package(LAPACK)
+    find_package(BoostNumericBindings ${REQUIRED_IF_ROOT_THREAD})
 endif()
 if(WIN32)
     find_package(Boost 1.40.0 REQUIRED COMPONENTS system-mt thread_win32-mt)
 else()
     find_package(Boost 1.40.0 REQUIRED COMPONENTS system-mt thread-mt)
 endif()
-find_package(BOOSTNUMERICBINDINGS)
 
 # build dependencies
 if (WITH_BUILD_DEPS AND (NOT ROOT_THREAD) )
@@ -104,8 +104,8 @@ if (WITH_BUILD_DEPS AND (NOT ROOT_THREAD) )
 
     if (WITH_LAPACK)
         ExternalProject_Add(boost-numeric-bindings
-            GIT_REPOSITORY "http://git.tiker.net/trees/boost-numeric-bindings.git"
-            GIT_TAG ${BOOSTNUMERICBINDINGS_TAG}
+            URL http://mathema.tician.de/news.tiker.net/download/software/boost-numeric-bindings/boost-numeric-bindings-20081116.tar.gz
+            URL_MD5 835c88497ba8d6fd745e3971c560a6a3
             BUILD_IN_SOURCE 1
             CONFIGURE_COMMAND ""
             BUILD_COMMAND ""
@@ -127,6 +127,7 @@ endif()
 # config files
 set(INSTALL_DATA_DIR "${CMAKE_INSTALL_PREFIX}/share/${PROJECT_NAME}")
 configure_file(config.h.in config.h)
+install(FILES ${CMAKE_BINARY_DIR}/config.h DESTINATION include/${PROJECT_NAME} COMPONENT Runtime)
 
 # build settings
 include_directories(

@@ -2,3 +2,8 @@
 arkcmake/*
 !arkcmake/FindBoostNumericBindings.cmake
 !arkcmake/updateArkcmake.py
+!arkcmake/DefineCMakeDefaults.cmake
+!arkcmake/DefineCompilerFlags.cmake
+!arkcmake/MacroCheckCCompilerFlagSSP.cmake
+!arkcmake/MacroEnsureOutOfSourceBuild.cmake
+!arkcmake/ExternalProjectWithFilename.cmake

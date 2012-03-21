@@ -11,12 +11,21 @@ set(PROJECT_CONTACT_VENDOR arkTools)
 set(LIBRARY_VERSION ${PROJECT_VERSION})
 set(LIBRARY_SOVERSION "0.0.0")
 
+# third party library version
+set(BOOSTNUMERICBINDINGS_REQUIRED_VERSION   20081116)
+set(BOOST_REQUIRED_VERSION                  1.4.2) 
+
+# md5 check sums
+set(ARKOSG_MD5                      0f074bb72d2ab61e7a710d177ad6feda)
+set(BOOSTNUMERICBINDINGS_MD5        835c88497ba8d6fd745e3971c560a6a3)
+
 # options
-option(WITH_BUILD_DEPS "Build external dependencies." ON)
+option(WITH_BUILD_DEPS "Build external dependencies." OFF)
 option(WITH_BUILD_SHARED "Build shared library." OFF)
 option(WITH_PREFER_STATIC "Prefer static linking." ON)
 option(WITH_BUILD_TESTING "Build test programs." OFF)
 option(WITH_LAPACK "Build with lapack library support." OFF)
+option(WITH_WARNINGS "Enable warnings." OFF)
 
 # variables
 set(ROOT_THREAD TRUE CACHE INTERNAL "Is this the top level of the recursion?")
@@ -24,7 +33,8 @@ set(INSTALLED_TARGETS "")
 
 # modules
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake ${CMAKE_SOURCE_DIR}/cmake/arkcmake)
-include(BundleUtilities)
+include(DefineCMakeDefaults)
+include(DefineCompilerFlags)
 include(CheckIncludeFiles)
 include(CheckFunctionExists)
 include(CheckSymbolExists)
@@ -33,7 +43,8 @@ include(CheckLibraryExists)
 #include(CheckPrototypeExists)
 #include(CheckCXXSourceCompiles)
 #include(CheckCSourceCompiles)
-include(ExternalProject)
+include(ExternalProjectWithFilename)
+include(BundleUtilities)
 
 # spawn new cmake to build deps
 if (WITH_BUILD_DEPS AND ROOT_THREAD)
@@ -42,9 +53,7 @@ if (WITH_BUILD_DEPS AND ROOT_THREAD)
         "-DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}"
         "-DEP_BASE_DIR=${EP_BASE_DIR}"
         "-DWITH_BUILD_DEPS=${WITH_BUILD_DEPS}"
-        "-DWITH_BUILD_SHARED=${WITH_BUILD_SHARED}"
         "-DWITH_PREFER_STATIC=${WITH_PREFER_STATIC}"
-        "-DWITH_TESTING=${WITH_TESTING}"
         "-DWITH_LAPACK=${WITH_LAPACK}"
         "-DROOT_THREAD=FALSE"
         RESULT_VARIABLE ERROR)
@@ -82,12 +91,12 @@ endif()
 if(WITH_LAPACK)
     enable_language(Fortran)
     find_package(LAPACK)
-    find_package(BoostNumericBindings ${REQUIRED_IF_ROOT_THREAD})
+    find_package(BoostNumericBindings ${BOOSTNUMERICBINDINGS_REQUIRED_VERSION} ${REQUIRED_IF_ROOT_THREAD})
 endif()
 if(WIN32)
-    find_package(Boost 1.40.0 REQUIRED COMPONENTS system-mt thread_win32-mt)
+    find_package(Boost ${BOOST_REQUIRED_VERSION} REQUIRED COMPONENTS system-mt thread_win32-mt)
 else()
-    find_package(Boost 1.40.0 REQUIRED COMPONENTS system-mt thread-mt)
+    find_package(Boost ${BOOST_REQUIRED_VERSION} REQUIRED COMPONENTS system-mt thread-mt)
 endif()
 
 # build dependencies
@@ -102,10 +111,11 @@ if (WITH_BUILD_DEPS AND (NOT ROOT_THREAD) )
         -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}
         )
 
-    if (WITH_LAPACK)
-        ExternalProject_Add(boost-numeric-bindings
-            URL http://mathema.tician.de/news.tiker.net/download/software/boost-numeric-bindings/boost-numeric-bindings-20081116.tar.gz
-            URL_MD5 835c88497ba8d6fd745e3971c560a6a3
+    if (WITH_LAPACK AND (NOT BOOSTNUMERICBINDINGS_FOUND))
+        ExternalProjectWithFilename_Add(boost-numeric-bindings
+            URL http://mathema.tician.de/news.tiker.net/download/software/boost-numeric-bindings/boost-numeric-bindings-${BOOSTNUMERICBINDINGS_REQUIRED_VERSION}.tar.gz
+            URL_MD5 ${BOOSTNUMERICBINDINGS_MD5} 
+            FILENAME boost-numeric-bindings-${BOOSTNUMERICBINDINGS_MD5}.tar.gz
             BUILD_IN_SOURCE 1
             CONFIGURE_COMMAND ""
             BUILD_COMMAND ""
@@ -137,6 +147,18 @@ include_directories(
     ${Boost_INCLUDE_DIRS}
     )
 add_definitions(-DBOOST_THREAD_USE_LIB)
+
+if (WITH_WARNINGS)
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=gnu99 -pedantic")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -Wshadow -Wmissing-prototypes -Wdeclaration-after-statement")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wunused -Wfloat-equal -Wpointer-arith -Wwrite-strings -Wformat-security")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wmissing-format-attribute")
+
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pedantic")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wshadow")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wunused -Wfloat-equal -Wpointer-arith -Wwrite-strings -Wformat-security")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wmissing-format-attribute")
+endif()
 
 # install data files
 install(DIRECTORY "${PROJECT_SOURCE_DIR}/data" DESTINATION share/${PROJECT_NAME} COMPONENT Dev PATTERN "*.git*" EXCLUDE)

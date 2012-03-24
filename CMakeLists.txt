@@ -249,11 +249,6 @@ install(TARGETS  ${INSTALLED_TARGETS}
     RESOURCE DESTINATION "share/jsbsim" COMPONENT Runtime
     )
 
-# install external projects, if built
-if (EXISTS ${EP_BASE_DIR}/${CMAKE_INSTALL_PREFIX}/)
-    install(DIRECTORY ${EP_BASE_DIR}/${CMAKE_INSTALL_PREFIX}/ DESTINATION ${CMAKE_INSTALL_PREFIX} COMPONENT Runtime)
-endif()
-
 ### packaging
 # set icns file containing icons
 if (APPLE)

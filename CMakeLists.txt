@@ -1,4 +1,4 @@
-project (arkmath C CXX Fortran)
+project (arkmath C CXX)
 
 # settings
 cmake_minimum_required (VERSION 2.8)

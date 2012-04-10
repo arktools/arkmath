@@ -141,7 +141,7 @@ install(FILES ${CMAKE_BINARY_DIR}/config.h DESTINATION include/${PROJECT_NAME} C
 
 # build settings
 if(APPLE)
-    set(CMAKE_OSX_ARCHITECTURES "x86_64" CACHE STRING "Build architectures for OSX" FORCE)
+    set(CMAKE_OSX_ARCHITECTURES "i386 ppc x86_64" CACHE STRING "Build architectures for OSX" FORCE)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mmacosx-version-min=10.5 -ftree-vectorize -fvisibility-inlines-hidden" CACHE STRING "Flags used by the compiler during all build types." FORCE)
 endif()
 include_directories(

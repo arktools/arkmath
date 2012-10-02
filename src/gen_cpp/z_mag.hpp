@@ -1,3 +1,3 @@
-z_mag(0,0) = Bn*(-dd-cc+bb+aa)+Bd*(2*b*d-2*a*c)+Be*(2*a*d+2*b*c);
-z_mag(1,0) = Be*(-dd+cc-bb+aa)+Bd*(2*c*d+2*a*b)+Bn*(2*b*c-2*a*d);
-z_mag(2,0) = Bd*(dd-cc-bb+aa)+Be*(2*c*d-2*a*b)+Bn*(2*b*d+2*a*c);
+z_mag(0,0) = cosPsi*cosTheta*Bn+sinPsi*cosTheta*Be-sinTheta*Bd;
+z_mag(1,0) = (sinPhi*cosPsi*sinTheta-cosPhi*sinPsi)*Bn+(sinPhi*sinPsi*sinTheta+cosPhi*cosPsi)*Be+sinPhi*cosTheta*Bd;
+z_mag(2,0) = (cosPhi*cosPsi*sinTheta+sinPhi*sinPsi)*Bn+(cosPhi*sinPsi*sinTheta-sinPhi*cosPsi)*Be+cosPhi*cosTheta*Bd;

@@ -1,4 +1,3 @@
-f_att(0,0) = 0.5*(-d*(Ve*tanL/(R0+h)+Omega*sinL+(dd-cc-bb+aa)*wz+(2*c*d+2*a*b)*wy+(2*b*d-2*a*c)*wx)-c*(Vn/(R0+h)+(2*c*d-2*a*b)*wz+(-dd+cc-bb+aa)*wy+(2*a*d+2*b*c)*wx)-b*(-Ve/(R0+h)-Omega*cosL+(2*b*d+2*a*c)*wz+(2*b*c-2*a*d)*wy+(-dd-cc+bb+aa)*wx));
-f_att(1,0) = 0.5*(c*(Ve*tanL/(R0+h)+Omega*sinL+(dd-cc-bb+aa)*wz+(2*c*d+2*a*b)*wy+(2*b*d-2*a*c)*wx)-d*(Vn/(R0+h)+(2*c*d-2*a*b)*wz+(-dd+cc-bb+aa)*wy+(2*a*d+2*b*c)*wx)+a*(-Ve/(R0+h)-Omega*cosL+(2*b*d+2*a*c)*wz+(2*b*c-2*a*d)*wy+(-dd-cc+bb+aa)*wx));
-f_att(2,0) = 0.5*(-b*(Ve*tanL/(R0+h)+Omega*sinL+(dd-cc-bb+aa)*wz+(2*c*d+2*a*b)*wy+(2*b*d-2*a*c)*wx)+a*(Vn/(R0+h)+(2*c*d-2*a*b)*wz+(-dd+cc-bb+aa)*wy+(2*a*d+2*b*c)*wx)+d*(-Ve/(R0+h)-Omega*cosL+(2*b*d+2*a*c)*wz+(2*b*c-2*a*d)*wy+(-dd-cc+bb+aa)*wx));
-f_att(3,0) = 0.5*(a*(Ve*tanL/(R0+h)+Omega*sinL+(dd-cc-bb+aa)*wz+(2*c*d+2*a*b)*wy+(2*b*d-2*a*c)*wx)+b*(Vn/(R0+h)+(2*c*d-2*a*b)*wz+(-dd+cc-bb+aa)*wy+(2*a*d+2*b*c)*wx)-c*(-Ve/(R0+h)-Omega*cosL+(2*b*d+2*a*c)*wz+(2*b*c-2*a*d)*wy+(-dd-cc+bb+aa)*wx));
+f_att(0,0) = tanTheta*(cosPhi*wz+sinPhi*wy)+wx;
+f_att(1,0) = cosPhi*wy-sinPhi*wz;
+f_att(2,0) = (cosPhi*wz+sinPhi*wy)/cosTheta;

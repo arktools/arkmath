@@ -1,4 +1,3 @@
-f_att(1,1) = 0.5*(-d*(Ve*tan(L)/(R0+h)+Omega*sin(L)+(d**2-c**2-b**2+a**2)*wz+(2*c*d+2*a*b)*wy+(2*b*d-2*a*c)*wx)-c*(Vn/(R0+h)+(2*c*d-2*a*b)*wz+(-d**2+c**2-b**2+a**2)*wy+(2*a*d+2*b*c)*wx)-b*(-Ve/(R0+h)-Omega*cos(L)+(2*b*d+2*a*c)*wz+(2*b*c-2*a*d)*wy+(-d**2-c**2+b**2+a**2)*wx))
-f_att(2,1) = 0.5*(c*(Ve*tan(L)/(R0+h)+Omega*sin(L)+(d**2-c**2-b**2+a**2)*wz+(2*c*d+2*a*b)*wy+(2*b*d-2*a*c)*wx)-d*(Vn/(R0+h)+(2*c*d-2*a*b)*wz+(-d**2+c**2-b**2+a**2)*wy+(2*a*d+2*b*c)*wx)+a*(-Ve/(R0+h)-Omega*cos(L)+(2*b*d+2*a*c)*wz+(2*b*c-2*a*d)*wy+(-d**2-c**2+b**2+a**2)*wx))
-f_att(3,1) = 0.5*(-b*(Ve*tan(L)/(R0+h)+Omega*sin(L)+(d**2-c**2-b**2+a**2)*wz+(2*c*d+2*a*b)*wy+(2*b*d-2*a*c)*wx)+a*(Vn/(R0+h)+(2*c*d-2*a*b)*wz+(-d**2+c**2-b**2+a**2)*wy+(2*a*d+2*b*c)*wx)+d*(-Ve/(R0+h)-Omega*cos(L)+(2*b*d+2*a*c)*wz+(2*b*c-2*a*d)*wy+(-d**2-c**2+b**2+a**2)*wx))
-f_att(4,1) = 0.5*(a*(Ve*tan(L)/(R0+h)+Omega*sin(L)+(d**2-c**2-b**2+a**2)*wz+(2*c*d+2*a*b)*wy+(2*b*d-2*a*c)*wx)+b*(Vn/(R0+h)+(2*c*d-2*a*b)*wz+(-d**2+c**2-b**2+a**2)*wy+(2*a*d+2*b*c)*wx)-c*(-Ve/(R0+h)-Omega*cos(L)+(2*b*d+2*a*c)*wz+(2*b*c-2*a*d)*wy+(-d**2-c**2+b**2+a**2)*wx))
+f_att(1,1) = tan(%theta)*(cos(%phi)*wz+sin(%phi)*wy)+wx
+f_att(2,1) = cos(%phi)*wy-sin(%phi)*wz
+f_att(3,1) = (cos(%phi)*wz+sin(%phi)*wy)/cos(%theta)

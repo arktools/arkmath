@@ -25,12 +25,21 @@ x = Matrix([phi, theta, psi, vn, ve, vd, l, L, h]) # state
 u = Matrix([wx, wy, wz, fx, fy, fz]) # input
 
 # frames
+r = r0 + h
+
 i = ReferenceFrame('i') # ECI
 e = ReferenceFrame('e') # ECEF
 e.set_ang_vel(i, omega*i.z)
-n = e.orientnew('n', 'Body', [L, l, 0], '321')          # navigation
-e.set_ang_vel(i, omega*i.z)
+n = e.orientnew('n', 'Body', [L, l+pi/2, 0], '321')     # navigation
 b = n.orientnew('b', 'Body', [phi, theta, psi], '321')  # body
+
+t = Symbol('t')
+print Eq(dot(n.ang_vel_in(e),n.x),vd/r)
+print Eq(dot(n.ang_vel_in(e),n.y),ve/r)
+print Eq(dot(n.ang_vel_in(e),n.z),0)
+
+print diff(L,t)
+
 
 # vectors
 w_ib = wx*b.x + wy*b.y + wz*b.z
@@ -41,22 +50,28 @@ o.set_vel(i, 0) # no velocity wrt inertial frame
 o.set_vel(e, 0) # no velocity wrt planet frame
 o.set_vel(n, 0) # no velocity wrt nav frame
 
-p = o.locatenew('p', (r0 + h)*n.x)
+p = o.locatenew('p', r*n.x)
 p.set_vel(n, vn*n.x + ve*n.y + vd*n.z)
+p.set_vel(e, p.v1pt_theory(o,e,n))
 
 # kinematics
-v_op_nb = p.v1pt_theory(o,e,n)
-dvn = dot(v_op_nb,n.x)
-dve = dot(v_op_nb,n.y)
-dvd = dot(v_op_nb,n.z)
-
-# input
+dphi = 0
+dtheta = 0
+dpsi = 0
+dvn = dot(p.vel(e),n.x)
+dve = dot(p.vel(e),n.y)
+dvd = dot(p.vel(e),n.z)
+dh = -vd
 
 # dynamics
-f = Matrix([dvn, dve, dvd])
+t = Symbol('t')
+#f = Matrix([dphi, dtheta, dpsi, dvn, dve, dvd, dl, dL, dh])
+f = x
 F = f.jacobian(x)
+G = f.jacobian(u)
 
 print 'F = \n', mprint(F)
+print 'G = \n', mprint(G)
 
 #print '\nc code\n'
 #cprint_boost_matrix(F,'F')

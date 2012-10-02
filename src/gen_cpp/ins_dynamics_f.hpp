@@ -1,9 +1,9 @@
 f(0,0) = tanTheta*(cosPhi*wz+sinPhi*wy)+wx;
 f(1,0) = cosPhi*wy-sinPhi*wz;
 f(2,0) = (cosPhi*wz+sinPhi*wy)/cosTheta;
-f(3,0) = -Ve*(Ve*tanL/(R0+h)+2*Omega*sinL)+Vd*Vn/(R0+h)+fn;
-f(4,0) = -Vn*(-Ve*tanL/(R0+h)-2*Omega*sinL)-Vd*(-Ve/(R0+h)-2*Omega*cosL)+fe;
-f(5,0) = -Ve*(Ve/(R0+h)+2*Omega*cosL)-Vn^2/(R0+h)+g+fd;
-f(6,0) = Vn/(R0+h);
-f(7,0) = Ve/(cosL*(R0+h));
+f(3,0) = -Ve*(Ve*tanL/R+2*Omega*sinL)+Vd*Vn/R+fn;
+f(4,0) = -Vn*(-Ve*tanL/R-2*Omega*sinL)-Vd*(-Ve/R-2*Omega*cosL)+fe;
+f(5,0) = -Ve*(Ve/R+2*Omega*cosL)-Vn^2/R+g+fd;
+f(6,0) = Vn/R;
+f(7,0) = Ve/(cosL*R);
 f(8,0) = -Vd;

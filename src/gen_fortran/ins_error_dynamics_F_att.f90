@@ -1,9 +1,9 @@
-F_att(1,1) = cos(%phi)*tan(%theta)*wy-sin(%phi)*tan(%theta)*wz
-F_att(1,2) = cos(%phi)*sec(%theta)**2*wz+sin(%phi)*sec(%theta)**2*wy
+F_att(1,1) = 0
+F_att(1,2) = 0
 F_att(1,3) = 0
-F_att(2,1) = -cos(%phi)*wz-sin(%phi)*wy
+F_att(2,1) = 0
 F_att(2,2) = 0
 F_att(2,3) = 0
-F_att(3,1) = -(sin(%phi)*wz-cos(%phi)*wy)/cos(%theta)
-F_att(3,2) = (cos(%phi)*sin(%theta)*wz+sin(%phi)*sin(%theta)*wy)/cos(%theta)**2
+F_att(3,1) = 0
+F_att(3,2) = 0
 F_att(3,3) = 0

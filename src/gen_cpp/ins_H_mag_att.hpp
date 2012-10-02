@@ -1,4 +1,3 @@
-H_mag_att(0,0) = 0;
 H_mag_att(0,1) = -(cosPsi*sinTheta*Bn+sinPsi*sinTheta*Be+cosTheta*Bd);
 H_mag_att(0,2) = -cosTheta*(sinPsi*Bn-cosPsi*Be);
 H_mag_att(1,0) = cosPhi*cosPsi*sinTheta*Bn+sinPhi*sinPsi*Bn+cosPhi*sinPsi*sinTheta*Be-sinPhi*cosPsi*Be+cosPhi*cosTheta*Bd;

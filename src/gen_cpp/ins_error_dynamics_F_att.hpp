@@ -1,9 +1,0 @@
-F_att(0,0) = cosPhi*tanTheta*wy-sinPhi*tanTheta*wz;
-F_att(0,1) = cosPhi*secTheta^2*wz+sinPhi*secTheta^2*wy;
-F_att(0,2) = 0;
-F_att(1,0) = -cosPhi*wz-sinPhi*wy;
-F_att(1,1) = 0;
-F_att(1,2) = 0;
-F_att(2,0) = -(sinPhi*wz-cosPhi*wy)/cosTheta;
-F_att(2,1) = (cosPhi*sinTheta*wz+sinPhi*sinTheta*wy)/cosTheta^2;
-F_att(2,2) = 0;

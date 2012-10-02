@@ -1,9 +1,9 @@
-G_att(1,1) = 1
-G_att(1,2) = sin(%phi)*tan(%theta)
-G_att(1,3) = cos(%phi)*tan(%theta)
+G_att(1,1) = 0
+G_att(1,2) = 0
+G_att(1,3) = 0
 G_att(2,1) = 0
-G_att(2,2) = cos(%phi)
-G_att(2,3) = -sin(%phi)
+G_att(2,2) = 0
+G_att(2,3) = 0
 G_att(3,1) = 0
-G_att(3,2) = sin(%phi)/cos(%theta)
-G_att(3,3) = cos(%phi)/cos(%theta)
+G_att(3,2) = 0
+G_att(3,3) = 0

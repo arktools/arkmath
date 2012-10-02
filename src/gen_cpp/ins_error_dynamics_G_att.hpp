@@ -1,9 +1,0 @@
-G_att(0,0) = 1;
-G_att(0,1) = sinPhi*tanTheta;
-G_att(0,2) = cosPhi*tanTheta;
-G_att(1,0) = 0;
-G_att(1,1) = cosPhi;
-G_att(1,2) = -sinPhi;
-G_att(2,0) = 0;
-G_att(2,1) = sinPhi/cosTheta;
-G_att(2,2) = cosPhi/cosTheta;

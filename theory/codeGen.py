@@ -61,6 +61,9 @@ for fileName in fortranFiles:
     # cleanup end of line
     text = re.sub('[\r\n]+',';\n',text)
 
+    # remove 0 lines
+    text = re.sub('.*=\s*0\s*;\n','',text) 
+
     # fix indices for boost style
     text = re.sub('\((?P<x>\d),(?P<y>\d)\)', indexReplace, text)
 

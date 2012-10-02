@@ -108,7 +108,7 @@ Linearization of Error Dyanmics
    [wxMaxima: section end   ] */
 
 /* [wxMaxima: input   start ] */
-F : fullratsimp(subst(C_nb_euler_eq,rEquation,jacobian(makelist(f_full[i,1],i,1,9),
+F : fullratsimp(subst(rEquation,jacobian(makelist(f[i,1],i,1,9),
 makelist(x[i,1],i,1,9))));
 /* [wxMaxima: input   end   ] */
 

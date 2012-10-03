@@ -111,8 +111,8 @@ dh = -vd
 print 'state space'
 f_simp = Matrix([dphi, dtheta, dpsi, dvn, dve, dvd, dL, dl, dh])
 f = f_simp.subs({diff(L,t):dL,diff(l,t):dl,r:r0+h})
-F = f.jacobian(x)
-G = f.jacobian(u)
+F = factor(f.jacobian(x))
+G = factor(f.jacobian(u))
 
 mpprint_matrix(F,'F')
 mpprint_matrix(G,'G')

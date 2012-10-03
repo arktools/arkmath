@@ -30,15 +30,12 @@ r = r0 + h
 i = ReferenceFrame('i') # ECI
 e = ReferenceFrame('e') # ECEF
 e.set_ang_vel(i, omega*i.z)
-n = e.orientnew('n', 'Body', [L, l+pi/2, 0], '321')     # navigation
+n = e.orientnew('n', 'Body', [-(l+pi/2), L, 0], '321')     # navigation
 b = n.orientnew('b', 'Body', [phi, theta, psi], '321')  # body
 
 t = Symbol('t')
-print Eq(dot(n.ang_vel_in(e),n.x),vd/r)
-print Eq(dot(n.ang_vel_in(e),n.y),ve/r)
-print Eq(dot(n.ang_vel_in(e),n.z),0)
 
-print diff(L,t)
+#print diff(L,t)
 
 
 # vectors
@@ -62,11 +59,13 @@ dvn = dot(p.vel(e),n.x)
 dve = dot(p.vel(e),n.y)
 dvd = dot(p.vel(e),n.z)
 dh = -vd
+dl = solve(Eq(dot(n.ang_vel_in(e),n.x),vn/r),diff(l,t))[0]
+dL = solve(Eq(dot(n.ang_vel_in(e),n.y),ve/r),diff(L,t))[0]
 
 # dynamics
 t = Symbol('t')
-#f = Matrix([dphi, dtheta, dpsi, dvn, dve, dvd, dl, dL, dh])
-f = x
+f = Matrix([dphi, dtheta, dpsi, dvn, dve, dvd, dl, dL, dh])
+print f
 F = f.jacobian(x)
 G = f.jacobian(u)
 
